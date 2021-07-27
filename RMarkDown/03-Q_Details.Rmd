@@ -1,0 +1,46 @@
+# Questionnaire Details
+The information of the LFS survey is obtained by completing three questionnaires, questionnaire 1, which is not accessible. Questionnaire 2, which consists of 2 parts _FORM2KOL_ and _FORM2JOZ_. FORM2KOL asks the general information of the household. And _FORM2JOZ_ asks the personal information of individuals. And questionnaire number 3,_FORM3_, asks the employment status of individuals of 10 years old and older.
+
+In the following, we will review more information about each of these questionnaires:
+
+## FORM2KOL
+
+This form is completed for the whole household and examines the general characteristics of the household. To view all the variables of this form, you can refer to [_Meta Data_](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/blob/master/Files/Meta_Data.xlsx) file. 
+
+## FORM2JOZ
+This form is completed for all household members present in the sample and includes questions that examine the individual characteristics of household members.This form consists of five parts which mentioned briefly below. You can see the full set of variables and their values in _Meta Data_ file.
+
+*   Questions Which are asked from all family members.
+    These questions identify individual characteristics such as age, gender, nationality, and residence status.
+    
+*   Questions which are asked from individuals with _Present_ or _Temporary absent_ residence status.
+    Depending on the residence status of the individuals specified in the previous questions, other questions will be asked to determine the immigrants and the reasons for their migration and their previous place of residence.
+
+*   The question asks people who live abroad and classified their living country into six categories. 
+    
+
+*   Questions which are asked from individuals 6 or above year old.
+    These questions determine the educational characteristics of individuals, such as literacy status, degree, etc.
+
+*   The question asked from individuals 10 or above years old and specify marriage status
+
+## FORM3 
+
+This form is completed for family members over the age of 10 and examines individuals' employment status and characteristics. This form consists of 8 parts, which are given below. See _Meta Data_ file for details of the questions and their values. 
+
+*   Questions that examine the employment status
+
+*   Questions that examine the characteristics of the main job
+
+*   Questions that examine working hours in all occupations
+
+*   Questions that examine the desire to increase working hours or look for another job
+
+*   Questions that examines the characteristics of the second job
+
+*   Questions that examine job search
+
+*   Questions that address previous work experience
+
+*   Questions that examine the characteristics of the desired job
+

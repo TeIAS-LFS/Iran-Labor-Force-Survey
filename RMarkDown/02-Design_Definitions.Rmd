@@ -1,0 +1,134 @@
+# Design and definitions{#Design_Definitions}
+
+In this section, we briefly review the goals and target population of the labor force survey. Also, the sampling framework and weighting method to achieve these goals are explained. And finally, the main definitions used in this survey is determined. For more information on statistical specifications, estimation method, estimation formulas, etc. see released documents by statistical center of Iran (link).
+
+## Purpose
+
+The general purpose of this survey is to identify the structure of the labor force, determine the current status of active, employed, and unemployed population in the entire country, urban and rural areas, and each province, as well as seasonal and annual changes in them. 
+
+## Target society
+
+People who, by definition, are members of ordinary households or group resident households in urban or rural areas of the country constitutes the target society of the project. Therefore, this survey does not cover the following people:
+
+*   Ordinary non-resident family members
+*   Institutional household members
+
+## Sampling framework
+  
+*   Sampling unit
+
+    The sampling unit of the first stage is quasi-constituency (based on the basic sample) and the sampling unit of the second stage is the rotation groups of three households.
+        
+*   Sampling method
+*   Rotation pattern
+
+    In the labor force Survey scheme, the 2-2-2 rotation pattern is used so that the household is in the sample for two consecutive seasons; Then, it is temporarily removed from the sample for two consecutive seasons; finally, it returns to the sample for two other consecutive seasons and then leaves the sample forever. First rotating frame (groups) designed for 1384-1387. Then new rotating frames designed for 1388-1391, 1389-1391, 1392-1396, 1397-now based on the last Population Census. By renewing the rotating frames, all households and individuals are replaced by new ones. 
+    In each season, within each quasi-area, four rotation groups are counted as below:
+      *   The group entering the sample for the first time and 3 more seasons will be in the sample.
+      *   The group that is in the sample for the second consecutive season or will be in the sample for more 2 seasons.
+      *   The group that has re-entered the sample after two seasons of temporary exit or another season will be observed. 
+      *   The group that is in the sample for last time and will leave the sample permanently from next season. 
+      
+    Thus, the sample interference rate between two consecutive seasons and two identical seasons of two consecutive years is 50% and between two consecutive years is 55%.
+      
+*   Determining the number of samples (in each province)
+*   Sample selection method
+*   Accepted sampling error
+
+
+## Weighting
+Weighting is done in three stages: "applying basic weight," "weight adjustment for complete non-response," and "weight adjustment based on demographic forecasts. The weight obtained after applying these steps determines that "each person in the sample is representative fot how many individuals in the population".
+
+*   Applying the basic weight
+*   Weight adjustment for complete non-response
+*   Weight adjustment based on demographic forecasts
+
+## Definitions
+
+**Ordinary Household**
+
+A typical household comprises people who live in the same dormitory, spend time with each other, and usually eat together. Therefore, the members of a household don't need to be related to each other. In other words, the household is not necessarily the same as the family. A person living alone is also considered a household.
+    
+**Ordinary Resident Household**
+  
+**Group Household**
+
+A Group household is a group of people who live together due to special circumstances (mainly having common features).
+  
+**Residence Status**
+
+Residence status means, which of the following conditions do family members have at the survey time?
+
+*   Present
+*   Temporary absent
+*   Abroad
+*   Other
+
+**Immigrant**
+
+Those household members whose current duration of living in the city or county is less than 12 months considered immigrants.
+  
+**Work**
+
+Economic activities (intellectual and physical) that are done to earn income (cash and non-cash) and the purpose of which is to produce goods or provide services are considered as work.
+  
+
+**Employed**
+
+According to the definition of work, all 10 years (or 15 years) of age and older people (minimum age specified) who have worked at least one hour during the reference week or temporarily left work for any reason are considered employed. During the reference week, a temporary absence with a formal employment link for wage earners and business continuity for the self-employed is considered employment. 
+   The following people are also considered employed in terms of their importance in the country's economic activity:
+   
+   *  People who work for a family member without pay (unpaid family workers).
+   *  Interns engaged in an activity related to the institution's activity where the internship occurs (i.e., directly involved in the product or service) 
+   *  Students who have worked in the reference week by definition.
+   *  All persons serving in the Armed Forces as permanent or temporary cadres 
+   
+**Unemployed**
+
+People who meet the following three conditions are called unemployed.
+
+*   Be unemployed during the reference week (do not have a paid or self-employed job).
+*   Be ready for work in the reference week or the week after (ready for a paid or self-employed employment).
+*   Look for Job in the reference week and three weeks before (take specific steps to look for a paid or self-employed job)
+
+People who have not been looking for a job due to starting a job in the future or waiting to return to a previous job - but are unemployed and ready to work - are also considered unemployed.
+
+**Economically active population**
+
+All persons aged 10 (or 15) and over who are, by definition, employed or unemployed in the calendar week before the reference week are considered to be economically active populations.
+
+**Economically inactive population**
+
+All persons 10 (or 15) years of age and older (minimum age specified) who do not, by definition, fall into either the employed or the unemployed during the reference week are considered economically inactive populations.
+
+**Population out of the workforce**
+
+All people aged 0-9 and those aged 10 and over who do not fall into either the employed or the unemployed during the reference week are considered population out of the workforce.
+
+**Major occupational groups**
+
+Major occupational groups are occupations in which people work in the reference week.
+
+According to the International Standard Classification of Occupations, ISCO, all jobs in the country are classified into ten major groups.
+ 
+**Main Workplace Activity**
+
+The main activity of the workplace is the activity of the workplace in which the employee worked during the reference week. This activity is determined by the type of goods produced or services offered by the person's workplace.
+
+The main activity of the employed personal workplace is classified according to the International Standard Industrial Classification (ISIC)
+
+**Occupational status**
+
+According to the country's conditions, employees' employment status is classified according to the International Classification of Status in Employment, ICSE.
+
+**Normal working hours**
+
+Normal working hours are the average working hours of a person in a week of the survey season.
+
+**Incomplete employment**
+
+People with Incomplete employment include all employees who work less than 44 hours a week during the reference week due to economic reasons such as recession, inability to find work with more working hours, being in the non-working season, etc. And are willing and ready to extra work in the reference week. 
+
+**The amount of Incomplete employment**
+
+The total number of overtime hours that people with Incomplete employment tend to do (up to 44 hours).

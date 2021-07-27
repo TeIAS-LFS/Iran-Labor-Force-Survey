@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Design and definitions | Iran Labor Force Survey</title>
+  <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Design and definitions | Iran Labor Force Survey" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Design and definitions | Iran Labor Force Survey" />
+  
+  <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+<meta name="author" content="Naser Amanzadeh, Ali Naghizadeh" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="intro.html"/>
+<link rel="next" href="questionnaire-details.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
+<li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
+<li class="chapter" data-level="3" data-path="Design-Definitions.html"><a href="Design-Definitions.html"><i class="fa fa-check"></i><b>3</b> Design and definitions</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="Design-Definitions.html"><a href="Design-Definitions.html#purpose"><i class="fa fa-check"></i><b>3.1</b> Purpose</a></li>
+<li class="chapter" data-level="3.2" data-path="Design-Definitions.html"><a href="Design-Definitions.html#target-society"><i class="fa fa-check"></i><b>3.2</b> Target society</a></li>
+<li class="chapter" data-level="3.3" data-path="Design-Definitions.html"><a href="Design-Definitions.html#sampling-framework"><i class="fa fa-check"></i><b>3.3</b> Sampling framework</a></li>
+<li class="chapter" data-level="3.4" data-path="Design-Definitions.html"><a href="Design-Definitions.html#weighting"><i class="fa fa-check"></i><b>3.4</b> Weighting</a></li>
+<li class="chapter" data-level="3.5" data-path="Design-Definitions.html"><a href="Design-Definitions.html#definitions"><i class="fa fa-check"></i><b>3.5</b> Definitions</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="questionnaire-details.html"><a href="questionnaire-details.html"><i class="fa fa-check"></i><b>4</b> Questionnaire Details</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="questionnaire-details.html"><a href="questionnaire-details.html#form2kol"><i class="fa fa-check"></i><b>4.1</b> FORM2KOL</a></li>
+<li class="chapter" data-level="4.2" data-path="questionnaire-details.html"><a href="questionnaire-details.html#form2joz"><i class="fa fa-check"></i><b>4.2</b> FORM2JOZ</a></li>
+<li class="chapter" data-level="4.3" data-path="questionnaire-details.html"><a href="questionnaire-details.html#form3"><i class="fa fa-check"></i><b>4.3</b> FORM3</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="data-cleaning.html"><a href="data-cleaning.html"><i class="fa fa-check"></i><b>5</b> Data Cleaning</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="data-cleaning.html"><a href="data-cleaning.html#run-all"><i class="fa fa-check"></i><b>5.1</b> Run All</a></li>
+<li class="chapter" data-level="5.2" data-path="data-cleaning.html"><a href="data-cleaning.html#initializing"><i class="fa fa-check"></i><b>5.2</b> Initializing</a></li>
+<li class="chapter" data-level="5.3" data-path="data-cleaning.html"><a href="data-cleaning.html#installing-packages"><i class="fa fa-check"></i><b>5.3</b> Installing Packages</a></li>
+<li class="chapter" data-level="5.4" data-path="data-cleaning.html"><a href="data-cleaning.html#building-directory"><i class="fa fa-check"></i><b>5.4</b> Building Directory</a></li>
+<li class="chapter" data-level="5.5" data-path="data-cleaning.html"><a href="data-cleaning.html#creating-path"><i class="fa fa-check"></i><b>5.5</b> Creating Path</a></li>
+<li class="chapter" data-level="5.6" data-path="data-cleaning.html"><a href="data-cleaning.html#converting-rds"><i class="fa fa-check"></i><b>5.6</b> Converting RDS</a></li>
+<li class="chapter" data-level="5.7" data-path="data-cleaning.html"><a href="data-cleaning.html#form3-cleaning"><i class="fa fa-check"></i><b>5.7</b> Form3 Cleaning</a>
+<ul>
+<li class="chapter" data-level="5.7.1" data-path="data-cleaning.html"><a href="data-cleaning.html#renaming-variables-and-integrating-data"><i class="fa fa-check"></i><b>5.7.1</b> Renaming variables and integrating data</a></li>
+<li class="chapter" data-level="5.7.2" data-path="data-cleaning.html"><a href="data-cleaning.html#label-assimilations"><i class="fa fa-check"></i><b>5.7.2</b> Label assimilations</a></li>
+<li class="chapter" data-level="5.7.3" data-path="data-cleaning.html"><a href="data-cleaning.html#unknowns"><i class="fa fa-check"></i><b>5.7.3</b> Unknowns</a></li>
+<li class="chapter" data-level="5.7.4" data-path="data-cleaning.html"><a href="data-cleaning.html#creating-nr"><i class="fa fa-check"></i><b>5.7.4</b> Creating NR</a></li>
+<li class="chapter" data-level="5.7.5" data-path="data-cleaning.html"><a href="data-cleaning.html#changing-type-of-variables"><i class="fa fa-check"></i><b>5.7.5</b> Changing type of variables</a></li>
+<li class="chapter" data-level="5.7.6" data-path="data-cleaning.html"><a href="data-cleaning.html#correcting-time-and-day-inconsistencies"><i class="fa fa-check"></i><b>5.7.6</b> Correcting time and day inconsistencies</a></li>
+<li class="chapter" data-level="5.7.7" data-path="data-cleaning.html"><a href="data-cleaning.html#integrating-f3_d10"><i class="fa fa-check"></i><b>5.7.7</b> Integrating F3_D10</a></li>
+</ul></li>
+<li class="chapter" data-level="5.8" data-path="data-cleaning.html"><a href="data-cleaning.html#form2zoj-cleaning"><i class="fa fa-check"></i><b>5.8</b> FORM2ZOJ Cleaning</a>
+<ul>
+<li class="chapter" data-level="5.8.1" data-path="data-cleaning.html"><a href="data-cleaning.html#renaming-variables-and-integrating-data-1"><i class="fa fa-check"></i><b>5.8.1</b> Renaming variables and integrating data</a></li>
+<li class="chapter" data-level="5.8.2" data-path="data-cleaning.html"><a href="data-cleaning.html#changing-type-renaming-labels-creating-nr"><i class="fa fa-check"></i><b>5.8.2</b> Changing Type, Renaming Labels, Creating NR</a></li>
+</ul></li>
+<li class="chapter" data-level="5.9" data-path="data-cleaning.html"><a href="data-cleaning.html#form2kol-cleaning"><i class="fa fa-check"></i><b>5.9</b> FORM2KOL Cleaning</a></li>
+<li class="chapter" data-level="5.10" data-path="data-cleaning.html"><a href="data-cleaning.html#w3-cleaning"><i class="fa fa-check"></i><b>5.10</b> W3 Cleaning</a>
+<ul>
+<li class="chapter" data-level="5.10.1" data-path="data-cleaning.html"><a href="data-cleaning.html#renaming-variables-and-integrating-data-2"><i class="fa fa-check"></i><b>5.10.1</b> Renaming variables and integrating data</a></li>
+<li class="chapter" data-level="5.10.2" data-path="data-cleaning.html"><a href="data-cleaning.html#weigthadjusment"><i class="fa fa-check"></i><b>5.10.2</b> WeigthAdjusment</a></li>
+</ul></li>
+<li class="chapter" data-level="5.11" data-path="data-cleaning.html"><a href="data-cleaning.html#data-validation"><i class="fa fa-check"></i><b>5.11</b> Data Validation</a></li>
+<li class="chapter" data-level="5.12" data-path="data-cleaning.html"><a href="data-cleaning.html#exporting-dta"><i class="fa fa-check"></i><b>5.12</b> Exporting DTA</a></li>
+<li class="chapter" data-level="5.13" data-path="data-cleaning.html"><a href="data-cleaning.html#correcting-inconsistencies"><i class="fa fa-check"></i><b>5.13</b> Correcting Inconsistencies</a>
+<ul>
+<li class="chapter" data-level="5.13.1" data-path="data-cleaning.html"><a href="data-cleaning.html#panel-inconsistency"><i class="fa fa-check"></i><b>5.13.1</b> Panel Inconsistency</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="descriptive-evidence.html"><a href="descriptive-evidence.html"><i class="fa fa-check"></i><b>6</b> Descriptive Evidence</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="descriptive-evidence.html"><a href="descriptive-evidence.html#employment"><i class="fa fa-check"></i><b>6.1</b> Employment</a></li>
+<li class="chapter" data-level="6.2" data-path="descriptive-evidence.html"><a href="descriptive-evidence.html#unemployment"><i class="fa fa-check"></i><b>6.2</b> Unemployment</a></li>
+<li class="chapter" data-level="6.3" data-path="descriptive-evidence.html"><a href="descriptive-evidence.html#participation"><i class="fa fa-check"></i><b>6.3</b> Participation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Iran Labor Force Survey</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="Design_Definitions" class="section level1" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Design and definitions</h1>
+<p>In this section, we briefly review the goals and target population of the labor force survey. Also, the sampling framework and weighting method to achieve these goals are explained. And finally, the main definitions used in this survey is determined. For more information on statistical specifications, estimation method, estimation formulas, etc. see released documents by statistical center of Iran (link).</p>
+<div id="purpose" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Purpose</h2>
+<p>The general purpose of this survey is to identify the structure of the labor force, determine the current status of active, employed, and unemployed population in the entire country, urban and rural areas, and each province, as well as seasonal and annual changes in them.</p>
+</div>
+<div id="target-society" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Target society</h2>
+<p>People who, by definition, are members of ordinary households or group resident households in urban or rural areas of the country constitutes the target society of the project. Therefore, this survey does not cover the following people:</p>
+<ul>
+<li>Ordinary non-resident family members</li>
+<li>Institutional household members</li>
+</ul>
+</div>
+<div id="sampling-framework" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Sampling framework</h2>
+<ul>
+<li><p>Sampling unit</p>
+<p>The sampling unit of the first stage is quasi-constituency (based on the basic sample) and the sampling unit of the second stage is the rotation groups of three households.</p></li>
+<li><p>Sampling method</p></li>
+<li><p>Rotation pattern</p>
+<p>In the labor force Survey scheme, the 2-2-2 rotation pattern is used so that the household is in the sample for two consecutive seasons; Then, it is temporarily removed from the sample for two consecutive seasons; finally, it returns to the sample for two other consecutive seasons and then leaves the sample forever. First rotating frame (groups) designed for 1384-1387. Then new rotating frames designed for 1388-1391, 1389-1391, 1392-1396, 1397-now based on the last Population Census. By renewing the rotating frames, all households and individuals are replaced by new ones.
+In each season, within each quasi-area, four rotation groups are counted as below:</p>
+<ul>
+<li>The group entering the sample for the first time and 3 more seasons will be in the sample.</li>
+<li>The group that is in the sample for the second consecutive season or will be in the sample for more 2 seasons.</li>
+<li>The group that has re-entered the sample after two seasons of temporary exit or another season will be observed.</li>
+<li>The group that is in the sample for last time and will leave the sample permanently from next season.</li>
+</ul>
+<p>Thus, the sample interference rate between two consecutive seasons and two identical seasons of two consecutive years is 50% and between two consecutive years is 55%.</p></li>
+<li><p>Determining the number of samples (in each province)</p></li>
+<li><p>Sample selection method</p></li>
+<li><p>Accepted sampling error</p></li>
+</ul>
+</div>
+<div id="weighting" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Weighting</h2>
+<p>Weighting is done in three stages: “applying basic weight,” “weight adjustment for complete non-response,” and “weight adjustment based on demographic forecasts. The weight obtained after applying these steps determines that”each person in the sample is representative fot how many individuals in the population".</p>
+<ul>
+<li>Applying the basic weight</li>
+<li>Weight adjustment for complete non-response</li>
+<li>Weight adjustment based on demographic forecasts</li>
+</ul>
+</div>
+<div id="definitions" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> Definitions</h2>
+<p><strong>Ordinary Household</strong></p>
+<p>A typical household comprises people who live in the same dormitory, spend time with each other, and usually eat together. Therefore, the members of a household don’t need to be related to each other. In other words, the household is not necessarily the same as the family. A person living alone is also considered a household.</p>
+<p><strong>Ordinary Resident Household</strong></p>
+<p><strong>Group Household</strong></p>
+<p>A Group household is a group of people who live together due to special circumstances (mainly having common features).</p>
+<p><strong>Residence Status</strong></p>
+<p>Residence status means, which of the following conditions do family members have at the survey time?</p>
+<ul>
+<li>Present</li>
+<li>Temporary absent</li>
+<li>Abroad</li>
+<li>Other</li>
+</ul>
+<p><strong>Immigrant</strong></p>
+<p>Those household members whose current duration of living in the city or county is less than 12 months considered immigrants.</p>
+<p><strong>Work</strong></p>
+<p>Economic activities (intellectual and physical) that are done to earn income (cash and non-cash) and the purpose of which is to produce goods or provide services are considered as work.</p>
+<p><strong>Employed</strong></p>
+<p>According to the definition of work, all 10 years (or 15 years) of age and older people (minimum age specified) who have worked at least one hour during the reference week or temporarily left work for any reason are considered employed. During the reference week, a temporary absence with a formal employment link for wage earners and business continuity for the self-employed is considered employment.
+The following people are also considered employed in terms of their importance in the country’s economic activity:</p>
+<ul>
+<li>People who work for a family member without pay (unpaid family workers).</li>
+<li>Interns engaged in an activity related to the institution’s activity where the internship occurs (i.e., directly involved in the product or service)</li>
+<li>Students who have worked in the reference week by definition.</li>
+<li>All persons serving in the Armed Forces as permanent or temporary cadres</li>
+</ul>
+<p><strong>Unemployed</strong></p>
+<p>People who meet the following three conditions are called unemployed.</p>
+<ul>
+<li>Be unemployed during the reference week (do not have a paid or self-employed job).</li>
+<li>Be ready for work in the reference week or the week after (ready for a paid or self-employed employment).</li>
+<li>Look for Job in the reference week and three weeks before (take specific steps to look for a paid or self-employed job)</li>
+</ul>
+<p>People who have not been looking for a job due to starting a job in the future or waiting to return to a previous job - but are unemployed and ready to work - are also considered unemployed.</p>
+<p><strong>Economically active population</strong></p>
+<p>All persons aged 10 (or 15) and over who are, by definition, employed or unemployed in the calendar week before the reference week are considered to be economically active populations.</p>
+<p><strong>Economically inactive population</strong></p>
+<p>All persons 10 (or 15) years of age and older (minimum age specified) who do not, by definition, fall into either the employed or the unemployed during the reference week are considered economically inactive populations.</p>
+<p><strong>Population out of the workforce</strong></p>
+<p>All people aged 0-9 and those aged 10 and over who do not fall into either the employed or the unemployed during the reference week are considered population out of the workforce.</p>
+<p><strong>Major occupational groups</strong></p>
+<p>Major occupational groups are occupations in which people work in the reference week.</p>
+<p>According to the International Standard Classification of Occupations, ISCO, all jobs in the country are classified into ten major groups.</p>
+<p><strong>Main Workplace Activity</strong></p>
+<p>The main activity of the workplace is the activity of the workplace in which the employee worked during the reference week. This activity is determined by the type of goods produced or services offered by the person’s workplace.</p>
+<p>The main activity of the employed personal workplace is classified according to the International Standard Industrial Classification (ISIC)</p>
+<p><strong>Occupational status</strong></p>
+<p>According to the country’s conditions, employees’ employment status is classified according to the International Classification of Status in Employment, ICSE.</p>
+<p><strong>Normal working hours</strong></p>
+<p>Normal working hours are the average working hours of a person in a week of the survey season.</p>
+<p><strong>Incomplete employment</strong></p>
+<p>People with Incomplete employment include all employees who work less than 44 hours a week during the reference week due to economic reasons such as recession, inability to find work with more working hours, being in the non-working season, etc. And are willing and ready to extra work in the reference week.</p>
+<p><strong>The amount of Incomplete employment</strong></p>
+<p>The total number of overtime hours that people with Incomplete employment tend to do (up to 44 hours).</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="questionnaire-details.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/02-Design_Definitions.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

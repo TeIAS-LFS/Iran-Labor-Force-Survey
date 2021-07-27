@@ -1,0 +1,1049 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+# Data Cleaning
+
+In this section, we explain the cleaning steps needed for LFS data. We divide the entire code in around 10 scripts (Find the codes in this [link](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/tree/master/R%20Codes)) and will explain each of them in turn. If you just want to clean the data without knowing the details of cleaning, you can just copy the raw data, files and codes in separate folders in your computer and the edit the 4 first lines in the first script (100_Run_all) and run it. After a while, you can find cleaned data in R and Stata formats in your computer and use [_Meta Data_](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/blob/master/Files/Meta_Data.xlsx)! file to understand the cleaned data. However, we suggest you to do the cleaning step by step and know what is happening.  
+
+## Run All
+In this section, general information is specified, which should be changed commensurately with your pc. In fact, appropriate changes in this script allow other scripts to run on your computers without any problems.  
+&nbsp;
+```{r,eval=FALSE}
+rm(list=ls())
+
+# Before Running Code specify the directories in  which your code, your files and your data stored.
+
+code_path         = "C:/Users/Dropbox/Research/LFS Cleaning/R Codes" # change it to the path of codes in your computer. Find the codes here (link)
+Files_paths       = "C:/Users/Dropbox/Research/LFS Cleaning/Files" #path of cleaning files (not raw data) in your computer. Find the cleaning files here (link)
+Path              = "F:/LFS" # your working directory. Raw data should copy here in a sub folder named "Raw data"
+First_year        = 84L # first year of the data you want to clean
+Last_year         = 98L # last year of the data you want to clean
+
+
+source(paste0(code_path,"/","101Initializing.R"))
+source(paste0(code_path,"/","110_Installing_packages.R"))
+source(paste0(code_path,"/","120_Building_directory.R"))
+source(paste0(code_path,"/","140_Create_path.R"))
+source(paste0(code_path,"/","150_Converting_RDS.R"))
+source(paste0(code_path,"/","160_Form3_Cleaning.R"))
+source(paste0(code_path,"/","170_Form2joz_Cleaning.R"))
+source(paste0(code_path,"/","180_Form2kol_Cleaning.R"))
+source(paste0(code_path,"/","190_W3_Cleaning.R"))
+source(paste0(code_path,"/","200_Exporting_DTA.R"))
+```
+
+## Initializing
+
+in this script, we specify the name of folders and path of them. You can change them or just use these default names.
+
+```{r,eval=FALSE}
+       
+Raw_data          = "Raw data"
+Imported_data     = "Imported data"
+Processd_data     = "Processed data"
+Processd_data_dta = "processed data DTA"
+Col_names         = "LFS_Col_name.xlsx"
+F2J_Labels        = "Form2joz_Labels.xlsx"
+F3_Labels         = "Form3_Labels.xlsx"
+Season            = c("01","02","03","04")
+N                 = First_year:Last_year
+
+Raw_data_path          = paste0(Path,"/",Raw_data)
+Imported_data_path     = paste0(Path,"/",Imported_data)
+Processd_data_Path     = paste0(Path,"/",Processd_data)
+Processd_data_Path_dta = paste0(Path,"/",Processd_data_dta)
+Col_name_path          = paste0(Files_paths,"/",Col_names)
+F2J_Labels_path        = paste0(Files_paths,"/",F2J_Labels)
+F3_Labels_path         = paste0(Files_paths,"/",F3_Labels)
+```
+
+## Installing Packages
+This section lists the packages required for the data cleaning process. It downloads, installs and loads packages that do not exist on your computer. And it only loads pre-installed packages.  
+&nbsp;
+```{r,warning=FALSE,message=FALSE}
+pkglist <- c("tidyverse","readxl","foreign","writexl","RODBC","data.table","stringi",
+             "plyr","rio","haven","kableExtra","ggpubr")
+
+
+for (package in pkglist){
+  if ((eval(parse(text = paste0("require(",package,")")))==FALSE)) {
+    install.packages(package)
+    }
+}
+
+```
+
+## Building Directory
+Running this script, similar to how raw data is stored on your computer, creates new folders to store raw data in RDS format without any changes.
+Also, a Processed data folder and sub-folders are created for each year to put the cleaned data in it.
+
+This script consists of three blocks. In the first block, it checks to see if there is a raw data folder on your PC, and if it exists, it tells you to make sure it is not empty. 
+&nbsp;
+
+```{r ,eval=FALSE}
+if (file.exists(Path)){
+  if(file.exists(Raw_data_path)){
+    print("you have Raw_data folder in your PC, make sure this folder was not empty")
+  }else{
+    print("you have no raw data")
+  }
+}else{
+  dir.create(Path)
+}
+
+```
+
+In the second block, it creates an imported data folder just like the raw data folder(this folder is a copy of the _Raw data_ folder without any data and with a new name which is _imported data_)  
+&nbsp;
+
+```{r,eval=FALSE}
+RDFP <- list.dirs(paste0(Raw_data_path)) #raw data folders path
+IDFP <- str_replace(RDFP,Raw_data,Imported_data) #imported data folder path
+for (i in 1:length(IDFP)) {
+  if (file.exists(IDFP[i])) {
+    NULL
+  }else{
+    dir.create(IDFP[i])
+  }
+}
+```
+Finally, in the third block, it creates a processed data folder that cleaned data will be stored in it.
+&nbsp;
+
+```{r,eval=FALSE}
+if(file.exists(Processd_data_Path)){
+  for (year in N){
+    if(file.exists(paste0(Processd_data_Path,"/",year))){
+      NULL
+      }else{
+        dir.create(paste0(Processd_data_Path,"/",year))
+      }
+    }
+  }else{
+    dir.create(Processd_data_Path)
+    for (year in N) {
+      dir.create(paste0(Processd_data_Path,"/",year))
+    }
+}
+```
+
+
+
+## Creating Path
+
+This section aims to write a code in which the address of all the raw data stored in the "Raw_path " vector. Also, a new vector is created from this vector, which is the address of Raw data in  RDS format.
+In fact, building these two vectors helps to change the format of data easily.  &nbsp;
+
+```{r,eval=FALSE}
+library("stringi")
+
+Raw_path<- list.files(Raw_data_path,pattern = "FORM2JOZ|FORM2KOL|FORM3|W3|.mdb",
+                  full.names = TRUE,recursive = TRUE)
+
+RDS_path <- str_replace(Raw_path,".xlsx|.DBF|.mdb|.dta",".RDS")
+```
+
+## Converting RDS
+
+In this section, raw data is stored in RDS format without any changes in the "imported data" folder. Since in the previous section, vectors of raw data addresses in their initial format and RDS format were created, it is enough to write a for loop that loads the raw data and saves it in RDS format in The "imported data" folder.
+
+As you probably noticed from the previous section, the format of raw data is _.xlsx_, _.DBF_(dBase database file), _.dta_(stats data sets) and _.mdb_. for loading _.xlsx_ files we use _readxl_ package for _.dta_ files we use _haven_ package for _.DBF_ files we use _foreign_ package, and for loading _.mdb_ files, we use the _RODBC_ package. reading access file is a little tricky in R, and you can find helpful guidance in this link
+
+```{r,eval=FALSE}
+
+library("stringi")
+library("readxl")
+library("foreign")
+library("haven")
+library("RODBC")
+
+for (i in 1:length(Raw_path)) {
+  if (str_detect(Raw_path[i],".xlsx")) {
+    s = read_excel(Raw_path[i],col_types = "text")
+    saveRDS(s,RDS_path[i])
+  }else if (str_detect(Raw_path[i],".DBF")) {
+    s = read.dbf(Raw_path[i],as.is = TRUE)
+    saveRDS(s,RDS_path[i])
+  }else if (str_detect(Raw_path[i],".mdb")) {
+      db <-paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=",Raw_path[i])
+      con <- odbcDriverConnect(db)
+      a <- sqlTables(con)
+      LFS <- as_tibble(sqlFetch (con ,a$TABLE_NAME[length(a$TABLE_NAME)],rownames=TRUE))
+      saveRDS(LFS,RDS_path[i])
+      odbcClose(con)
+  }else if(str_detect(Raw_path[i],".dta")){
+    s = read_dta(Raw_path[i])
+    saveRDS(s,RDS_path[i])
+  }
+}
+```
+
+
+## Form3 Cleaning
+
+### Renaming variables and integrating data
+
+As you can see in the table below, which is part of an _LFS_Col_names.xlsx_. The names of the variables differ in different years, all of which must be converted to a single name, the first row of this table. In fact, the purpose of creating this file is that we can change the names of variables without the need to change the code and only by changing the Excel file.
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/LFS_Col_name.xlsx",sheet = "FORM3")
+
+D %>%
+  select(Year_Season, F3_D08:F3_D13)%>%
+  filter(Year_Season %in% c("8401","8701","9802"))%>%
+  kable(caption =  "FORM3 Varibles Name")%>%
+  kable_styling()
+```
+
+For renaming the variable, we run the following code, which loads FORM3.RDS from its path, which was created in the previous part, 
+ and changes the Var names to the desired one according to LFS_Col_name.xlsx.
+
+
+```{r,eval=FALSE}
+F3_colnames <- read_xlsx(Col_name_path,sheet = "FORM3")
+
+F3_RDS_Path <- RDS_path[str_detect(RDS_path,"FORM3.RDS|9802|9803|9804")]
+
+for (year in First_year:Last_year) {
+  index <- match(F3_colnames$Year_Season[str_detect(F3_colnames$Year_Season,paste0("^",year))],F3_colnames$Year_Season)
+  
+  FORM3 <- tibble()
+  
+  for (j in index) {
+    
+    F3 <- readRDS(F3_RDS_Path[str_detect(F3_RDS_Path,as.character(F3_colnames$Year_Season[j]))])
+    
+    for (i in 2:length(colnames(F3_colnames))) {
+      names(F3)[names(F3) == eval(parse(text=paste0("F3_colnames","$",colnames(F3_colnames)[i])))[j]] <- colnames(F3_colnames)[i]
+    }
+    F3 <- F3 %>%
+      mutate_all(as.character)
+    
+    FORM3 <- bind_rows(FORM3,F3)
+  }
+}
+
+```
+
+
+
+  * **Correcting Pkey in 2005**
+  
+  The third and fourth digits of the Pkey in 2005, unlike other years, show the month, not the seasons, which we turn into the season as follows.
+```{r,eval=FALSE}
+FORM3 <- FORM3%>%
+      mutate(Season = ifelse(str_sub(Pkey,3,4) %in% c("01","02","03"),"01",
+                             ifelse(str_sub(Pkey,3,4) %in% c("04","05","06"),"02",
+                                    ifelse(str_sub(Pkey,3,4) %in% c("07","08","09"),"03","04"))))%>%
+      mutate(Pkey = paste0(str_sub(Pkey,1,2),Season,str_sub(Pkey,5,14)))%>%
+      select(-Season)
+
+```
+
+  * **Questionnaire inconsistencies **
+  
+  Questionnaire No. 3 of the LFS plan has changed over time. Some of these changes are related to changing the order of the questions, in which case changing the names of the variables leads us to our goal of unifying the variables over time, and others go beyond that. In the following, we will examine these discrepancies and provide a suitable solution to resolve them.
+
+
+```{r,eval=FALSE}
+FORM3 <- FORM3%>%
+      mutate(F3_D02 = case_when(
+        (F3_D02_87 == "1" | F3_D04_87 == "1" | F3_D05_87 == "1") ~ "1",
+        (F3_D02_87 == "2" & F3_D04_87 == "2" & F3_D05_87 == "2") ~ "2"
+      ))
+
+```
+
+### Label assimilations
+
+In different years, the values of the variables are stored differently, despite the same meanings. Therefore, we must convert these values to the same one, to be able to compare economic variables over time. To do this, just like what was done to rename the variables, an excel table has been prepared in which it is specified how the values of the variables are stored each year and how much should be converted to the same value. The following is an excerpt from this Excel file.
+
+
+
+The following code in each year change the labels to the desired one
+```{r,eval=FALSE}
+
+for (year in First_year:Last_year) {
+  
+  FORM3 <- readRDS(paste0(Processd_data_Path,"/",year,"/FORM3.RDS"))
+  
+  Fac_vars <- excel_sheets(F3_Labels_path)
+  Fac_vars <- Fac_vars[excel_sheets(F3_Labels_path) %in% colnames(FORM3)]
+  
+  for (i in 1:length(Fac_vars)) {
+    Levels <- read_xlsx(F3_Labels_path,sheet = Fac_vars[i])
+    Levels[Levels == "space"] <- " "
+    Levels[Levels == "2space"] <- "  "
+    Levels[Levels == "0space"] <- ""
+    Levels_Value <- colnames(Levels)[!str_detect(colnames(Levels),"\\...")]
+    
+    
+    for (j in 2:length(Levels_Value)) {
+      L <-  eval(parse(text = paste0("FORM3$",Fac_vars[i],"==","Levels$",Levels_Value[j],"[Levels$Year ==",year,"]")))          
+      eval(parse(text = paste0("FORM3$",Fac_vars[i],"[L]"," <- ","Levels$",Levels_Value[j],"[1]")))
+    }
+  }
+
+```
+### Unknowns
+The values of some variables are letters such as _&_, _&&_, _@@_ and _-_, that do not have a specific meaning, or at least the Statistical Center of Iran regarding these values has published no explanation.
+These values converted to missing in labels assimilation part
+
+Number of observation in which the value of variables are unknown are described below
+
+*   &&
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM2JOZ_&&_Before")
+
+D %>%
+  kable(fixed_thead = T , caption =  "FORM3 &&")%>%
+  kable_styling()%>%
+  scroll_box(width = "100%",height = "100%")
+
+```
+
+*   &
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM2JOZ_&_Before")
+
+D %>%
+  kable(fixed_thead = T , caption =  "FORM3 &")%>%
+  kable_styling()%>%
+  scroll_box(width = "100%",height = "100%")
+
+```
+
+
+
+
+### Creating NR
+
+NR stands for "Not Related", and we defined this value for all variables to get a true picture of the Missing data.
+
+In fact, if we examine the raw data, we see many missing observations, which may confuse us at first glance, but this is not the case. Most of these missings are because the question corresponding to these variables is not asked from some individuals in Sample.
+
+NR labels are created according to the following flowcharts. For example, questions 2-7 are not related to individuals who answer yes to question 1.
+
+
+
+![NR Diagram For Year After 1387](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/NR Diagram_Befor_87.png)
+![NR Diagram For Year Before 1387](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/NR Diagram_After_87.png)
+
+For Creating NR labels, we should translate the above flowchart to R codes. For doing so, we run following code. 
+
+```{r,eval=FALSE}
+for (year in N) {
+  FORM3 <- readRDS(paste0(Processd_data_Path,"/",year,"/FORM3.RDS"))
+    if(year < 87){
+    FORM3 <- FORM3%>%
+      mutate(F3_D02 = ifelse(is.na(F3_D02) & (F3_D01 == "Yes"),"NR",F3_D02),
+             F3_D03 = ifelse(is.na(F3_D03) & (F3_D02 !="No"),"NR",F3_D03),
+             F3_D06 = ifelse(is.na(F3_D06) & (F3_D03 !="No"),"NR",F3_D06),
+             F3_D07 = ifelse(is.na(F3_D07) & (F3_D06 !="No"),"NR",F3_D07),
+             F3_D08 = ifelse(is.na(F3_D08) & (F3_D06 == "No"),"NR",F3_D08),
+             F3_D09 = ifelse(is.na(F3_D09) & (F3_D08 == "NR"),"NR",F3_D09),
+             F3_D10 = ifelse(is.na(F3_D10) & (F3_D08 == "NR"),"NR",F3_D10),
+             F3_D11 = ifelse(is.na(F3_D11) & (F3_D08 == "NR"),"NR",F3_D11),
+             F3_D12 = ifelse(is.na(F3_D12) & (F3_D08 == "NR"),"NR",F3_D12),
+             F3_D13 = ifelse(is.na(F3_D13) & (F3_D08 == "NR"),"NR",F3_D13),
+             F3_D14SAL = ifelse(is.na(F3_D14SAL) & (F3_D08 == "NR"),-1,F3_D14SAL),
+             F3_D14MAH = ifelse(is.na(F3_D14MAH) & (F3_D08 == "NR"),-1,F3_D14MAH),
+             F3_D15SAL = ifelse(is.na(F3_D15SAL) & (F3_D08 == "NR"),-1,F3_D15SAL),
+             F3_D15MAH = ifelse(is.na(F3_D15MAH) & (F3_D08 == "NR"),-1,F3_D15MAH),
+             F3_D16SHASLIR = ifelse(is.na(F3_D16SHASLIR) & (F3_D08 == "NR"),-1,F3_D16SHASLIR),
+             F3_D16SHASLIS = ifelse(is.na(F3_D16SHASLIS) & (F3_D08 == "NR"),-1,F3_D16SHASLIS),
+             F3_D16SHHAMRO = ifelse(is.na(F3_D16SHHAMRO) & (F3_D08 == "NR"),-1,F3_D16SHHAMRO),
+             F3_D16SHHAMSA = ifelse(is.na(F3_D16SHHAMSA) & (F3_D08 == "NR"),-1,F3_D16SHHAMSA),
+             F3_D17 = ifelse(is.na(F3_D17) & (F3_D08 == "NR"|F3_D16SHHAMSA >=44),"NR",F3_D17),
+             F3_D18SHANBEH = ifelse(is.na(F3_D18SHANBEH) & (F3_D08 == "NR"),-1,F3_D18SHANBEH),
+             F3_D18YEKSHAN = ifelse(is.na(F3_D18YEKSHAN) & (F3_D08 == "NR"),-1,F3_D18YEKSHAN),
+             F3_D18DOSHANB = ifelse(is.na(F3_D18DOSHANB) & (F3_D08 == "NR"),-1,F3_D18DOSHANB),
+             F3_D18SESHANB = ifelse(is.na(F3_D18SESHANB) & (F3_D08 == "NR"),-1,F3_D18SESHANB),
+             F3_D18CHARSHA = ifelse(is.na(F3_D18CHARSHA) & (F3_D08 == "NR"),-1,F3_D18CHARSHA),
+             F3_D18PANSHAN = ifelse(is.na(F3_D18PANSHAN) & (F3_D08 == "NR"),-1,F3_D18PANSHAN),
+             F3_D18JOMEH = ifelse(is.na(F3_D18JOMEH) & (F3_D08 == "NR"),-1,F3_D18JOMEH),
+             F3_D18JAM = ifelse(is.na(F3_D18JAM) & (F3_D08 == "NR"),-1,F3_D18JAM),
+             F3_D19 = ifelse(is.na(F3_D19) & (F3_D08 == "NR"|F3_D16SHHAMSA >= F3_D18JAM),"NR",F3_D19),
+             F3_D20 = ifelse(is.na(F3_D20) & (F3_D08 == "NR"|F3_D16SHHAMSA <= F3_D18JAM),"NR",F3_D20),
+             F3_D21 = ifelse(is.na(F3_D21) & (F3_D08 == "NR"),"NR",F3_D21),
+             F3_D22 = ifelse(is.na(F3_D22) & (F3_D08 == "NR"|F3_D21 == "No"),"NR",F3_D22),
+             F3_D23 = ifelse(is.na(F3_D23) & (F3_D08 == "NR"|F3_D21 == "No"|F3_D22 == "No"),"NR",F3_D23),
+             F3_D24 = ifelse(is.na(F3_D24) & (F3_D08 == "NR"),"NR",F3_D24),
+             F3_D25 = ifelse(is.na(F3_D25) & (F3_D08 == "NR"|F3_D24 == "No"),"NR",F3_D25),
+             F3_D26 = ifelse(is.na(F3_D26) & (F3_D08 == "NR"|F3_D24 == "No"),"NR",F3_D26),
+             F3_D27ROZ = ifelse(is.na(F3_D27ROZ) & (F3_D08 == "NR"),-1,F3_D27ROZ),
+             F3_D27SAAT = ifelse(is.na(F3_D27SAAT) & (F3_D08 == "NR"),-1,F3_D27SAAT),
+             F3_D28 = ifelse(is.na(F3_D28) & (F3_D08 == "NR"|F3_D08 == "No"),"NR",F3_D28),
+             F3_D29 = ifelse(is.na(F3_D29) & (F3_D08 == "NR"|F3_D08 == "No"),"NR",F3_D29),
+             F3_D30 = ifelse(is.na(F3_D30) & (F3_D08 == "NR"|F3_D08 == "No"),"NR",F3_D30),
+             F3_D31 = ifelse(is.na(F3_D31) & (F3_D06 != "No"),"NR",F3_D31),
+             F3_D1_32 = ifelse(is.na(F3_D1_32) & (F3_D31 == "NR"|F3_D31 == "No"),"NR",F3_D1_32),
+             F3_D2_32 = ifelse(is.na(F3_D2_32) & (F3_D31 == "NR"|F3_D31 == "No"),"NR",F3_D2_32),
+             F3_D3_32 = ifelse(is.na(F3_D3_32) & (F3_D31 == "NR"|F3_D31 == "No"),"NR",F3_D3_32),
+             F3_D4_32 = ifelse(is.na(F3_D4_32) & (F3_D31 == "NR"|F3_D31 == "No"),"NR",F3_D4_32),
+             F3_D5_32 = ifelse(is.na(F3_D5_32) & (F3_D31 == "NR"|F3_D31 == "No"),"NR",F3_D5_32),
+             F3_D6_32 = ifelse(is.na(F3_D6_32) & (F3_D31 == "NR"|F3_D31 == "No"),"NR",F3_D6_32),
+             F3_D7_32 = ifelse(is.na(F3_D7_32) & (F3_D31 == "NR"|F3_D31 == "No"),"NR",F3_D7_32),
+             F3_D8_32 = ifelse(is.na(F3_D8_32) & (F3_D31 == "NR"|F3_D31 == "No"),"NR",F3_D8_32),
+             F3_D33 = ifelse(is.na(F3_D33) & (F3_D31 == "NR"|F3_D31 == "Yes"),"NR",F3_D33),
+             EX_D36 = ifelse(is.na(EX_D36) & (F3_D33 == "NR"|!(F3_D33 %in% c("First" , "Secound"))),"NR",EX_D36),
+             EX_D37SAL = ifelse(is.na(EX_D37SAL) & (EX_D36 == "NR"|EX_D36 == "No"),-1,EX_D37SAL),
+             EX_D37MAH = ifelse(is.na(EX_D37MAH) & (EX_D36 == "NR"|EX_D36 == "No"),-1,EX_D37MAH),
+             F3_D34 = ifelse(is.na(F3_D34) & (F3_D08 == "NR"),"NR",F3_D34),
+             F3_D35SAL = ifelse(is.na(F3_D35SAL) & (F3_D31 != "Yes"),-1,F3_D35SAL),
+             F3_D35MAH = ifelse(is.na(F3_D35MAH) & (F3_D31 != "Yes"),-1,F3_D35MAH),
+             F3_D36 = ifelse(is.na(F3_D36) & (F3_D31 == "NR"|EX_D36 == "No"|!(F3_D33 %in% c("First" , "Secound"))),"NR",F3_D36),
+             F3_D37SAL = ifelse(is.na(F3_D37SAL) & (F3_D36 == "NR"|F3_D36 != "Working"),-1,F3_D37SAL),
+             F3_D37MAH = ifelse(is.na(F3_D37MAH) & (F3_D36 == "NR"|F3_D36 != "Working"),-1,F3_D37MAH),
+             F3_D38 = ifelse(is.na(F3_D38) & (F3_D31 == "NR"|EX_D36 == "No"|!(F3_D33 %in% c("First" , "Secound"))),"NR",F3_D38),
+             F3_D39 = ifelse(is.na(F3_D39) & (F3_D06 != "No"),"NR",F3_D39),
+             F3_D40SAL = ifelse(is.na(F3_D40SAL) & (F3_D39 == "NR"|F3_D39 == "No"),-1,F3_D40SAL),
+             F3_D40MAH = ifelse(is.na(F3_D40MAH) & (F3_D39 == "NR"|F3_D39 == "No"),-1,F3_D40MAH),
+             F3_D41 = ifelse(is.na(F3_D41) & (F3_D39 == "NR"|F3_D39 == "No"),"NR",F3_D41),
+             F3_D42 = ifelse(is.na(F3_D42) & (F3_D39 == "NR"|F3_D39 == "No"),"NR",F3_D42),
+             F3_D43 = ifelse(is.na(F3_D43) & (F3_D39 == "NR"|F3_D39 == "No"),"NR",F3_D43),
+             F3_D44 = ifelse(is.na(F3_D44) & (F3_D39 == "NR"|F3_D39 == "No"),"NR",F3_D44),
+             F3_D45 = ifelse(is.na(F3_D45) & (F3_D38 == "NR"),"NR",F3_D45),
+             F3_D46 = ifelse(is.na(F3_D46) & (F3_D45 == "NR"|F3_D45 == "Yes"),"NR",F3_D46),
+             F3_D47 = ifelse(is.na(F3_D47) & (F3_D31 == "NR"|F3_D45 == "Yes"),"NR",F3_D47),
+             F3_D49 = ifelse(is.na(F3_D49) & (F3_D06=="NR"|F3_D06== "Yes"),"NR",F3_D49),
+             F3_D50 = ifelse(is.na(F3_D50) & (F3_D06=="NR"|F3_D06== "Yes"),"NR",F3_D50))
+    }
+    if (year >= 87) {
+    
+    FORM3 <- FORM3%>%
+      mutate(F3_D02_87 = ifelse(is.na(F3_D02_87) & (F3_D01 == "Yes") ,"NR",F3_D02_87),
+             F3_D03 = ifelse(is.na(F3_D03) & (F3_D02_87 == "NR"|F3_D02_87=="Yes")  ,"NR",F3_D03),
+             F3_D04_87 = ifelse(is.na(F3_D04_87) & (F3_D03 == "NR" | F3_D03 == "Yes")  ,"NR",F3_D04_87),
+             F3_D05_87 = ifelse(is.na(F3_D05_87) & (F3_D04_87 == "NR" | F3_D04_87 == "Yes")  ,"NR",F3_D05_87),
+             F3_D06 = ifelse(is.na(F3_D06) & (F3_D05_87 == "NR"|F3_D05_87=="Yes")  ,"NR",F3_D06),
+             F3_D07 = ifelse(is.na(F3_D07) & (F3_D06 == "NR" |F3_D06 == "No" ) ,"NR",F3_D07),
+             F3_D08 = ifelse(is.na(F3_D08) & (F3_D06 == "No" ) ,"NR",F3_D08),
+             F3_D09 = ifelse(is.na(F3_D09) & (F3_D06 == "No" ) ,"NR",F3_D09),
+             F3_D10 = ifelse(is.na(F3_D10) &(F3_D06 == "No" ) ,"NR",F3_D10),
+             F3_D11 = ifelse(is.na(F3_D11) & (F3_D06 == "No")  ,"NR",F3_D11),
+             F3_D12 = ifelse(is.na(F3_D12) & (F3_D06 == "No" ) ,"NR",F3_D12),
+             F3_D13 = ifelse(is.na(F3_D13) & (F3_D06 == "No" ) ,"NR",F3_D13),
+             F3_D14SAL = ifelse(is.na(F3_D14SAL) & (F3_D06 == "No" ) ,-1,F3_D14SAL),
+             F3_D14MAH = ifelse(is.na(F3_D14MAH) & (F3_D06 == "No") ,-1,F3_D14MAH),
+             F3_D15SAL = ifelse(is.na(F3_D15SAL) & (F3_D06 == "No" ) ,-1,F3_D15SAL),
+             F3_D15MAH = ifelse(is.na(F3_D15MAH) & (F3_D06 == "No" ) ,-1,F3_D15MAH),
+             F3_D16SHASLIR = ifelse(is.na(F3_D16SHASLIR) & (F3_D06 == "No" ) ,-1,F3_D16SHASLIR),
+             F3_D16SHASLIS = ifelse(is.na(F3_D16SHASLIS) & (F3_D06 == "No")  ,-1,F3_D16SHASLIS),
+             F3_D16SHHAMRO = ifelse(is.na(F3_D16SHHAMRO) & (F3_D06 == "No" ) ,-1,F3_D16SHHAMRO),
+             F3_D16SHHAMSA = ifelse(is.na(F3_D16SHHAMSA) & (F3_D06 == "No" ) ,-1,F3_D16SHHAMSA),
+             F3_D17 = ifelse(is.na(F3_D17) & (F3_D06 == "No" |F3_D16SHHAMSA >=44 ) ,"NR",F3_D17 ),
+             F3_D18SHANBEH = ifelse(is.na(F3_D18SHANBEH) & (F3_D06 == "No")  ,-1 ,F3_D18SHANBEH ),
+             F3_D18YEKSHAN = ifelse(is.na(F3_D18YEKSHAN) & (F3_D06 == "No" )  ,-1 ,F3_D18YEKSHAN ),
+             F3_D18DOSHANB = ifelse(is.na(F3_D18DOSHANB) & (F3_D06 == "No" ) ,-1 ,F3_D18DOSHANB ),
+             F3_D18SESHANB = ifelse(is.na(F3_D18SESHANB) & (F3_D06 == "No" ) ,-1 ,F3_D18SESHANB ),
+             F3_D18CHARSHA = ifelse(is.na(F3_D18CHARSHA) & (F3_D06 == "No" ) ,-1 ,F3_D18CHARSHA ),
+             F3_D18PANSHAN = ifelse(is.na(F3_D18PANSHAN) & (F3_D06 == "No" ) ,-1 ,F3_D18PANSHAN ),
+             F3_D18JOMEH = ifelse(is.na(F3_D18JOMEH) & (F3_D06 == "No") ,-1 ,F3_D18JOMEH ),
+             F3_D18JAM = ifelse(is.na(F3_D18JAM) & (F3_D06 == "No" ) ,-1 ,F3_D18JAM ),
+             F3_D19 = ifelse(is.na(F3_D19) & (F3_D06 == "No" |F3_D18JAM >= F3_D16SHHAMSA)  ,"NR",F3_D19),
+             F3_D20 = ifelse(is.na(F3_D20) & (F3_D06 == "No" |F3_D18JAM <= F3_D16SHHAMSA)  ,"NR",F3_D20),
+             F3_D21 = ifelse(is.na(F3_D21) & (F3_D06 == "No" ) ,"NR",F3_D21),
+             F3_D22 = ifelse(is.na(F3_D22) & (F3_D06 == "No"|F3_D21=="No") ,"NR",F3_D22),
+             F3_D23 = ifelse(is.na(F3_D23) & (F3_D06 == "No"|F3_D21=="No" ) ,"NR",F3_D23),
+             F3_D24 = ifelse(is.na(F3_D24) & (FORM3$F3_D06 == "No")  ,"NR",F3_D24),
+             F3_D25 = ifelse(is.na(F3_D25) & (F3_D06 == "No"|F3_D24=="No" ) ,"NR",F3_D25),
+             F3_D26 = ifelse(is.na(F3_D26) & (F3_D06 == "No"|F3_D24=="No" ) ,"NR",F3_D26),
+             F3_D27ROZ = ifelse(is.na(F3_D27ROZ) & (F3_D06 == "No" ) ,-1,F3_D27ROZ),
+             F3_D27SAAT = ifelse(is.na(F3_D27SAAT) & (F3_D06 == "No" ) ,-1,F3_D27SAAT),
+             F3_D28 = ifelse(is.na(F3_D28) & (F3_D06 == "No"|F3_D08 == "No" ) ,"NR", F3_D28),
+             F3_D29 = ifelse(is.na(F3_D29) & (F3_D06 == "No"|F3_D08 == "No" ) ,"NR", F3_D29),
+             F3_D30 = ifelse(is.na(F3_D30) & (F3_D06 == "No"|F3_D08 == "No" ) ,"NR",F3_D30),
+             F3_D31 = ifelse(is.na(F3_D31) & (F3_D06 == "NR"|F3_D06 == "Yes" ) ,"NR",F3_D31),
+             F3_D1_32 = ifelse(is.na(F3_D1_32) & (F3_D06 == "NR"|F3_D06 == "Yes"|F3_D31=="No" ) ,"NR",F3_D1_32 ),
+             F3_D2_32 = ifelse(is.na(F3_D2_32) & (F3_D06 == "NR"|F3_D06 == "Yes"|F3_D31=="No" ) ,"NR",F3_D2_32 ),
+             F3_D3_32 = ifelse(is.na(F3_D3_32) & (F3_D06 == "NR"|F3_D06 == "Yes"|F3_D31=="No" ) ,"NR",F3_D3_32 ),
+             F3_D4_32 = ifelse(is.na(F3_D4_32) & (F3_D06 == "NR"|F3_D06 == "Yes"|F3_D31=="No" ) ,"NR",F3_D4_32 ),
+             F3_D5_32 = ifelse(is.na(F3_D5_32) & (F3_D06 == "NR"|F3_D06 == "Yes"|F3_D31=="No" ) ,"NR",F3_D5_32 ),
+             F3_D6_32 = ifelse(is.na(F3_D6_32) & (F3_D06 == "NR"|F3_D06 == "Yes"|F3_D31=="No" ), "NR",F3_D6_32 ),
+             F3_D7_32 = ifelse(is.na(F3_D7_32) & (F3_D06 == "NR"|F3_D06 == "Yes"|F3_D31=="No" ) ,"NR",F3_D7_32 ),
+             F3_D8_32 = ifelse(is.na(F3_D8_32) & (F3_D06 == "NR"|F3_D06 == "Yes"|F3_D31=="No" ) ,"NR",F3_D8_32 ),
+             F3_D33 = ifelse(is.na(F3_D33) & (F3_D06 == "NR"|F3_D06 == "Yes"|F3_D31=="Yes" ) ,"NR",F3_D33),
+             F3_D34 = ifelse(is.na(F3_D34) & (F3_D06 == "NR"|F3_D06 == "Yes"|!(F3_D33 %in% c("First","Secound"))),"NR",F3_D34),
+             F3_D35SAL = ifelse(is.na(F3_D35SAL) & (F3_D34=="NR"|F3_D34 == "No" ), -1,F3_D35SAL),
+             F3_D35MAH = ifelse(is.na(F3_D35MAH) & (F3_D34=="NR"|F3_D34 == "No" ), -1,F3_D35MAH),
+             F3_D36 = ifelse(is.na(F3_D36) & (F3_D34=="NR"|F3_D34 == "No" ), "NR",F3_D36),
+             F3_D37SAL = ifelse(is.na(F3_D37SAL) & (F3_D34=="NR"|F3_D34 == "No"|!(F3_D36 %in% c("Working"))),-1,F3_D37SAL),
+             F3_D37MAH = ifelse(is.na(F3_D37MAH) & (F3_D34=="NR"|F3_D34 == "No"|!(F3_D36 %in% c("Working"))),-1,F3_D37MAH),
+             F3_D38 = ifelse(is.na(F3_D38) & (F3_D34=="NR"|F3_D34 == "No"|!(F3_D36 %in% c("Working"))),"NR",F3_D38),
+             F3_D39 = ifelse(is.na(F3_D39) & (F3_D34=="NR"|F3_D34== "No" ),"NR",F3_D39),
+             F3_D40SAL = ifelse(is.na(F3_D40SAL) & (F3_D39=="NR"|F3_D39== "No" ), -1,F3_D40SAL),
+             F3_D40MAH = ifelse(is.na(F3_D40MAH) & (F3_D39=="NR"|F3_D39== "No" ),-1,F3_D40MAH),
+             F3_D41 = ifelse(is.na(F3_D41) & (F3_D39=="NR"|F3_D39== "No" ) ,"NR",F3_D41),
+             F3_D42 = ifelse(is.na(F3_D42) & (F3_D39=="NR"|F3_D39== "No" ),"NR",F3_D42),
+             F3_D43 = ifelse(is.na(F3_D43) & (F3_D39=="NR"|F3_D39== "No" ), -1,F3_D43),
+             F3_D44 = ifelse(is.na(F3_D44) & (F3_D39=="NR"|F3_D39== "No" ) ,-1,F3_D44),
+             F3_D45 = ifelse(is.na(F3_D45) & (F3_D31=="NR"|F3_D33 %in% c("Seventh","Eighth","Ninth","Tenth","Eleventh","Twelfth")|F3_D34=="No"|F3_D39%in%c("Yes","No")),"NR",F3_D45),
+             F3_D46 = ifelse(is.na(F3_D46) & (F3_D31=="NR"|F3_D33 %in% c("Seventh","Eighth","Ninth","Tenth","Eleventh","Twelfth")|F3_D39=="No"|F3_D45== "Yes" ),"NR",F3_D46),
+             F3_D47 = ifelse(is.na(F3_D47) & (F3_D31=="NR"|F3_D39 %in% c("Yes","No") ) ,"NR",F3_D47),
+             F3_D49 = ifelse(is.na(F3_D49) & (F3_D06=="NR"|F3_D06== "Yes"), "NR",F3_D49),
+             F3_D50 = ifelse(is.na(F3_D50) & (F3_D06=="NR"|F3_D06== "Yes"),"NR",F3_D50))
+    FORM3 <- FORM3%>%
+      mutate(F3_D02 = case_when(
+        F3_D02_87 == "Yes" | F3_D04_87 == "Yes" | F3_D05_87 == "Yes" ~ "Yes",
+        F3_D02_87 == "No" & F3_D04_87 == "No" & F3_D05_87 == "No" ~ "No",
+        F3_D02_87 == "NR" & F3_D04_87 == "NR" & F3_D05_87 == "NR" ~ "NR"))
+  }
+
+  saveRDS(FORM3,paste0(Processd_data_Path,"/",year,"/","FORM3.RDS"))
+  }
+
+```
+
+As mentioned Defining Not related label help us to understand data in a better way and have a true picture of missings. By comparing the two following tables, we can see a large number of missing's reductions, which tell that many missing before creating NR are not due to don't answer the question but also due to not asking the questions
+
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM3_NA_Before")
+
+D %>%
+  kable(fixed_thead = T , caption =  "FORM3 NAs Befor Creating NR")%>%
+  kable_styling()%>%
+  scroll_box(width = "100%",height = "400px")
+
+```
+
+
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM3_NA_After")
+
+D %>%
+  kable(fixed_thead = T , caption =  "FORM3 NAs After Creating NR")%>%
+  kable_styling()%>%
+  scroll_box(width = "100%",height = "400px")
+
+```
+
+### Changing type of variables
+
+At first, all the variables are stored as a Character vector, but this not the case, and we should change it to an appropriate one. To do so, we use function _mutate_at_ in _tidyverse_ package and change the type of vars to integer, factor, character as shown below:
+
+
+```{r,eval=FALSE}
+
+Factor_vars <- c("F3_D01","F3_D02","F3_D02_87","F3_D03","F3_D04","F3_D04_87",
+                 "F3_D05","F3_D05_87","F3_D06","F3_D07","F3_D08","F3_D09","F3_D10",
+                 "F3_D11","F3_D12","F3_D13","F3_D17","F3_D19","F3_D20",
+                 "F3_D21","F3_D22","F3_D23","F3_D24","F3_D25","F3_D26",
+                 "F3_D28","F3_D29","F3_D30","F3_D31","F3_D1_32","F3_D2_32",
+                 "F3_D3_32","F3_D4_32","F3_D5_32","F3_D6_32","F3_D7_32",
+                 "F3_D8_32","F3_D9_32","F3_D33","F3_D34","F3_D36","F3_D38",
+                 "F3_D39","F3_D41","F3_D42","F3_D43","F3_D44","F3_D45",
+                 "F3_D46","F3_D47","F3_D49","F3_D50")
+
+Numeric_vars <- c("F3_D14SAL","F3_D14MAH","F3_D15SAL","F3_D15MAH","F3_D16SHASLIR",
+                  "F3_D16SHASLIS","F3_D16SHHAMRO","F3_D16SHHAMSA",
+                  "F3_D18SHANBEH","F3_D18YEKSHAN","F3_D18DOSHANB","F3_D18SESHANB",
+                  "F3_D18CHARSHA","F3_D18PANSHAN","F3_D18JOMEH","F3_D18JAM",
+                  "F3_D27ROZ","F3_D27SAAT","F3_D35SAL","F3_D35MAH","F3_D37SAL",
+                  "F3_D37MAH","F3_D40SAL","F3_D40MAH","F3_D48SAAT","F3_D48ROZ")
+
+Character_vars <- c("Pkey")
+
+
+for (year in N) {
+  FORM3 <- readRDS(paste0(Processd_data_Path,"/",year,"/FORM3.RDS"))
+
+  FORM3 <- FORM3%>%
+    mutate_at(vars(Factor_vars[Factor_vars %in% colnames(FORM3)]),as.factor)%>%
+    mutate_at(vars(Numeric_vars[Numeric_vars %in% colnames(FORM3)]),as.integer)%>%
+    mutate_at(vars(Character_vars[Character_vars %in% colnames(FORM3)]),as.character)
+  saveRDS(FORM3,paste0(Processd_data_Path,"/",year,"/","FORM3.RDS"))
+}
+
+
+```
+
+### Correcting time and day inconsistencies
+
+According to their answer to questions, some observations work more than 7 days a week! or work on average more than 24 hours in a day! Which is not make sense. 
+
+To correct these inconsistencies, we should check the number of them and replace them with NA if there is not a lot. So we represent the number of them in the following table.
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "Time_Day_inconsistency")
+
+D %>%
+  kable(fixed_thead = T , caption =  "FORM3 Time and Day Inconsistencies")%>%
+  kable_styling()%>%
+  scroll_box(width = "100%",height = "400px")
+
+```
+
+
+As we can see, these observations are not too much, and we can turn them to Na with the following code.
+```{r,eval=FALSE}
+for (year in N) {
+    FORM3 <- readRDS(paste0(Processd_data_Path,"/",year,"/FORM3.RDS"))
+    
+    FORM3 <- FORM3%>%
+    mutate(F3_D14MAH     = ifelse(F3_D14MAH > 12,NA,F3_D14MAH),
+           F3_D15MAH    = ifelse(F3_D15MAH > 12,NA,F3_D15MAH),
+           F3_D16SHASLIR = ifelse(F3_D16SHASLIR > 7,NA,F3_D16SHASLIR),
+           F3_D16SHASLIS = ifelse((F3_D16SHASLIS/F3_D16SHASLIR) > 24,NA,F3_D16SHASLIS),
+           F3_D16SHHAMRO = ifelse(F3_D16SHHAMRO > 7,NA,F3_D16SHHAMRO),
+           F3_D16SHHAMSA = ifelse((F3_D16SHHAMSA/F3_D16SHHAMRO) > 24,NA,F3_D16SHHAMSA),
+           F3_D27ROZ = ifelse(F3_D27ROZ > 7,NA,F3_D27ROZ),
+           F3_D27SAAT = ifelse((F3_D27SAAT/F3_D27ROZ) >24,NA,F3_D27SAAT),
+           F3_D35MAH = ifelse(F3_D35MAH > 12,NA,F3_D35MAH),
+           F3_D37MAH = ifelse(F3_D37MAH > 12,NA,F3_D37MAH),
+           F3_D40MAH = ifelse(F3_D40MAH > 12,NA,F3_D40MAH))
+  
+    saveRDS(FORM3,paste0(Processd_data_Path,"/",year,"/","FORM3.RDS"))
+
+  
+}
+
+```
+
+
+
+### Integrating F3_D10
+
+_F3_D10_ is a variable explains the main activity of the workplace, the values of which are 4-digit codes, the first 2 digits of which indicate the main groups of industries, and the next digits indicate the classes and sub-classes of the main industries.
+
+In fact, the main activity of the workplace is based on localized versions of The International Standard Industrial Classification, _ISIC_ (of course, the localized version is not much different from the international version. To check these minor differences, you can refer to the standards published by the Statistical Center of Iran)
+
+In Iran, for the years 1384 to 1386, 1387 to 1392 and 1392 so far the localized versions of _ISIC.Rev.3_ , _ISIC.Rev.3.1_ and _ISIC.Rev4_ are used, respectively. There are some changes from each version to the next one and it's not possible to follow all the codes consistently during the time. However, we tried to create consistent main groups over the time. To do so, we use the file "file name" and below code:
+
+
+## FORM2ZOJ Cleaning
+
+### Renaming variables and integrating data
+
+As mentioned, variables are stored with different names in different years, and FORM2JOZ's variables are no exception to this case, and it is necessary that the names of each variable be changed to a single name in different years, which is the same as before. And you can see more details in this regard with the names of the variables in different years and the ways that it is going to be converted in _LFS_Colnames_ file.
+
+Again in the Year 1384 third and fourth digit of Pkey indicate Month , Not Season, and we convert it to the season as below:
+
+```{r , eval = FALSE}
+FORM2JOZ <- FORM2JOZ%>%
+      mutate(Season = ifelse((str_sub(PKEY,3,4) %in% c("01","02","03")),"01",
+                             ifelse((str_sub(PKEY,3,4)%in% c("04","05","06")),"02",
+                                    ifelse((str_sub(PKEY,3,4)%in% c("07","08","09")),
+                                           "03","04"))))%>%
+      mutate(Pkey = paste0(str_sub(PKEY,1,2),Season,str_sub(PKEY,5,12)),F2_D01)%>%
+      select(-Season,-PKEY)
+```
+
+In some years, F2_D01, which indicates the row number of a household member, is one digit which should be in a two-digit format like as other years and we correct it by the following  code
+
+```{r, eval = FALSE}
+    FORM2JOZ<- FORM2JOZ%>%
+      mutate(Pkey  = case_when(
+        nchar(F2_D01)== 1 ~ paste0(PKEY,"0",F2_D01),
+        nchar(F2_D01)== 2 ~ paste0(PKEY, F2_D01)
+      ))
+
+```
+
+### Changing Type, Renaming Labels,  Creating NR
+The type and value of variables changed to the desired one in the way as explained in FORM3 cleaning Part and like before _NR_ created to distinguish between _NAs_ and Not related values. For more detail about the value of variable or label assimilation, you can see the _Form2joz_Labels_ excel file, and for more detail on the logic of creating _NR_, you can find one in the _Meta Data_ excel file. 
+
+#### **Changing Type**
+
+
+```{r,eval=FALSE}
+  FORM2JOZ <- FORM2JOZ%>%
+    mutate_at(vars(Pkey,F2_D01),as.character)%>%
+    mutate_at(vars(Birth_Year,Birth_Month,Age),as.integer)%>%
+    mutate_at(vars(Relation,Gender,Nationality,Residence_Status,
+                   Residence_Duration,F2_D11,F2_D12,F2_D13,F2_D14,Student,
+                   Literacy,Degree,Field_Study,Marriage_Status),as.factor)
+
+```
+
+
+#### **Unknowns and label assimilation**
+
+Like what we discussed in the Form 3 Cleaning part, FORM2JOZ variables have some unknown values for some observation which the number of them is presented in the following tables, and like before. We turn them to missings in the label assimilation part
+
+*   &&
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM2JOZ_&&_Before")
+
+D %>%
+  kable(fixed_thead = T , caption =  "FORM2JOZ &&")%>%
+  kable_styling()%>%
+  scroll_box(width = "100%",height = "100%")
+
+```
+
+
+*  & 
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM2JOZ_&_Before")
+
+D %>%
+  kable(fixed_thead = T , caption =  "FORM2JOZ &")%>%
+  kable_styling()%>%
+  scroll_box(width = "100%",height = "100%")
+
+```
+
+*  - 
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM2JOZ_-_Before")
+
+D %>%
+  kable(fixed_thead = T , caption =  "FORM2JOZ -")%>%
+  kable_styling()%>%
+  scroll_box(width = "100%",height = "100%")
+
+```
+
+
+
+
+```{r,eval=FALSE}
+  Fac_vars <- excel_sheets(F2J_Labels_path)
+  Fac_vars <- Fac_vars[excel_sheets(F2J_Labels_path) %in% colnames(FORM2JOZ)]
+  for (i in 1:length(Fac_vars)) {
+    Levels <- read_xlsx(F2J_Labels_path,sheet = Fac_vars[i])
+    Levels[Levels == "space"] <- " "
+    Levels[Levels == "2space"] <- "  "
+    Levels_Value <- colnames(Levels)[!str_detect(colnames(Levels),"\\...")]
+    for (j in 2:length(Levels_Value)) {
+      L <- levels(eval(parse(text = paste0("FORM2JOZ$",Fac_vars[i])))) == eval(parse(text = paste0("Levels$",Levels_Value[j])))[Levels$Year == year]
+      eval(parse(text =paste0("levels(","FORM2JOZ$",Fac_vars[i],")[L]"," <- ","Levels$",Levels_Value[j],"[1]")))
+    }
+  }
+```
+
+#### **Creating NR**
+
+![](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/NR_F2_Diagram.png)
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM2JOZ_NA_Before")
+
+D %>%
+  kable(fixed_thead = T , caption =  "FORM2JOZ NAs Before Creating NR")%>%
+  kable_styling()%>%
+  scroll_box(width = "100%",height = "400px")
+
+```
+
+```{r,echo=FALSE}
+D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM2JOZ_NA_After")
+
+D %>%
+  kable(fixed_thead = T , caption =  "FORM2JOZ NAs After Creating NR")%>%
+  kable_styling()%>%
+  scroll_box(width = "100%",height = "400px")
+
+```
+
+
+## FORM2KOL Cleaning
+
+## W3 Cleaning
+
+### Renaming variables and integrating data
+
+### WeigthAdjusment
+
+As mentioned, the weight of each observation indicates that each person in the sample represents how many people in the country, so the sum of these weights should be equal to the total population of the country. And since the information about the country's total population is obtained every 5 years using census data. This population should be estimated in the middle years that the Statistics Center uses Post Censal estimation to estimate the population.
+
+But when an Accurate population reveals years later, when can have an intercensal estimate of population, which is a better estimate than postcensal estimates. For this purpose, we divide the population into 12 groups based on being male or female, urban or rural, and three age groups ( below 10 years, 10-64 years and more than 65 years). And calculate the adjustment coefficient as below:
+
+
+
+
+<img src="https://render.githubusercontent.com/render/math?math=\text{Adjustment coefficient}_{s} = \frac{\text{Number of people in the group s according to intercensal estimation}}{\text{Number of people in group s according to data}}">
+
+
+Now adjusted weight drive from multiplying adjustment coefficient to the not adjusted weight
+
+## Data Validation
+
+This part checks demographic characteristics and labor force indicators calculated from cleaned data with a statistical center report to ensure cleaning procedure.
+
+First, we calculate demographic and labor force indicators according to the following code, then plot reported vs. calculated indicators.
+
+    * Demographic indicators
+
+```{r,eval=FALSE}
+Total_Pop_C  <-  tibble(
+  Year                = numeric(),
+  Total_population    = numeric(),
+  Male_T              = numeric(),
+  Female_T            = numeric(),
+  Urban_T             = numeric(),
+  Urban_M             = numeric(),
+  Urban_F             = numeric(),
+  Rural_T             = numeric(),
+  Rural_M             = numeric(),
+  Rural_F             = numeric(),
+  
+)
+
+Age10_Pop_C  <-  tibble(
+  Year                = numeric(),
+  Age10_population    = numeric(),
+  Age_10_Male         = numeric(),
+  Age_10_Female       = numeric(),
+  Age_10_Urban_T      = numeric(),
+  Age_10_Urban_M      = numeric(),
+  Age_10_Urban_F      = numeric(),
+  Age_10_Rural_T      = numeric(),
+  Age_10_Rural_M      = numeric(),
+  Age_10_Rural_F      = numeric(),
+  
+)
+
+for (i in First_year :Last_year) {
+  
+  FORM2 <- readRDS(paste0(Processd_data_Path,"/",i,"/","FORM2JOZ.RDS"))
+  FORM2 <- FORM2%>%
+    select(Pkey,Age,Gender)
+  
+  W3 <- readRDS(paste0(Processd_data_Path,"/",i,"/","W3.RDS"))
+  
+  W3 <- W3%>%
+    select(Pkey,Rural,IW_Seasonly)%>%
+    left_join(FORM2,by = "Pkey")
+  
+  Total_Pop_C  <-  Total_Pop_C %>% add_row(
+    Year                = i,
+    Total_population    = 0.25*sum(W3$IW_Seasonly,na.rm = true),
+    Male_T              = 0.25*sum(W3$IW_Seasonly[W3$Gender=="Male"],na.rm = true),
+    Female_T            = 0.25*sum(W3$IW_Seasonly[W3$Gender=="Female"],na.rm = true),
+    Urban_T             = 0.25*sum(W3$IW_Seasonly[W3$Rural=="1"],na.rm = true),
+    Urban_M             = 0.25*sum(W3$IW_Seasonly[W3$Rural=="1" & W3$Gender=="Male" ],na.rm = true),
+    Urban_F             = 0.25*sum(W3$IW_Seasonly[W3$Rural=="1" & W3$Gender=="Female" ],na.rm = true),
+    Rural_T             = 0.25*sum(W3$IW_Seasonly[W3$Rural=="2"],na.rm = true),
+    Rural_M             = 0.25*sum(W3$IW_Seasonly[W3$Rural=="2" & W3$Gender=="Male" ],na.rm = true),
+    Rural_F             = 0.25*sum(W3$IW_Seasonly[W3$Rural=="2" & W3$Gender=="Female" ],na.rm = true)
+    
+  )
+  
+  Age10_Pop_C <- Age10_Pop_C %>% add_row(
+    Year                = i,
+    Age10_population    = 0.25*sum(W3$IW_Seasonly[W3$Age >= 10],na.rm = true),
+    Age_10_Male         = 0.25*sum(W3$IW_Seasonly[W3$Age >= 10 & W3$Gender == "Male"],na.rm = true),
+    Age_10_Female       = 0.25*sum(W3$IW_Seasonly[W3$Age >= 10 & W3$Gender == "Female"],na.rm = true),
+    Age_10_Urban_T      = 0.25*sum(W3$IW_Seasonly[W3$Age >= 10 & W3$Rural == "1"],na.rm = true),
+    Age_10_Urban_M      = 0.25*sum(W3$IW_Seasonly[W3$Age >= 10 & W3$Rural == "1" & W3$Gender == "Male"],na.rm = true),
+    Age_10_Urban_F      = 0.25*sum(W3$IW_Seasonly[W3$Age >= 10 & W3$Rural == "1" & W3$Gender == "Female"],na.rm = true),
+    Age_10_Rural_T      = 0.25*sum(W3$IW_Seasonly[W3$Age >= 10 & W3$Rural == "2"],na.rm = true),
+    Age_10_Rural_M      = 0.25*sum(W3$IW_Seasonly[W3$Age >= 10 & W3$Rural == "2" & W3$Gender == "Male"],na.rm = true),
+    Age_10_Rural_F      = 0.25*sum(W3$IW_Seasonly[W3$Age >= 10 & W3$Rural == "2" & W3$Gender == "Female"],na.rm = true),
+  )
+  
+}
+```
+
+
+  * Labor force indicators
+
+```{r,eval=FALSE}
+
+LFS_Indicators_S  <-  tibble(
+  Year                = numeric(),
+  Season              = character(),
+  Male_Employment     = numeric(),
+  Female_Employment   = numeric(),
+  Total_Employment    = numeric(),
+  Male_Unemployment   = numeric(),
+  Female_Unemployment = numeric(),
+  Total_Unemployment  = numeric(),
+  Male_Participation  = numeric(),
+  Female_Participation= numeric(),
+  Total_Participation = numeric(),
+  Rural_Employment    = numeric(),
+  Rural_Unemployment  = numeric(),
+  Rural_Participation = numeric(),
+  Urban_Employment    = numeric(),
+  Urban_Unemployment  = numeric(),
+  Urban_Participation = numeric()
+)
+LFS_Indicators_Y  <-  tibble(
+  Year                = numeric(),
+  Male_Employment     = numeric(),
+  Female_Employment   = numeric(),
+  Total_Employment    = numeric(),
+  Male_Unemployment   = numeric(),
+  Female_Unemployment = numeric(),
+  Total_Unemployment  = numeric(),
+  Male_Participation  = numeric(),
+  Female_Participation= numeric(),
+  Total_Participation = numeric(),
+  Rural_Employment    = numeric(),
+  Rural_Unemployment  = numeric(),
+  Rural_Participation = numeric(),
+  Urban_Employment    = numeric(),
+  Urban_Unemployment  = numeric(),
+  Urban_Participation = numeric()
+)
+
+for (year in First_year:Last_year) {
+  
+  FORM3 <- readRDS(paste0(Processd_data_Path,"/",year,"/","FORM3.RDS"))
+  FORM3 <- FORM3%>%
+    select(Pkey,F3_D01,F3_D02,F3_D03,F3_D06,F3_D08,F3_D31,F3_D33,F3_D34)
+  
+  FORM2 <- readRDS(paste0(Processd_data_Path,"/",year,"/","FORM2JOZ.RDS"))
+  FORM2 <- FORM2%>%
+    select(Pkey,Age,Gender)
+    
+  W3 <- readRDS(paste0(Processd_data_Path,"/",year,"/","W3.RDS"))
+  W3 <- W3 %>%
+    select(Pkey,IW_Seasonly,Rural,Season)
+  
+  F3 <- FORM3%>%
+    left_join(FORM2,by="Pkey")%>%
+    left_join(W3,by = "Pkey")%>%
+    mutate(Employed = case_when(
+      F3_D01 == "Yes"|F3_D02 == "Yes"|F3_D03 == "Yes"|F3_D06 == "Yes"|F3_D08 == "Yes" ~ 1,
+      F3_D01 == "No"|F3_D02 == "No"|F3_D03 == "No"|F3_D06 == "No"|F3_D08 == "No" ~ 0))%>%
+    mutate(Unemployed = case_when(
+      Employed == 0 & F3_D31 == "Yes" & F3_D34 == "Yes" ~ 1,
+      Employed == 0 & F3_D31 == "No"  & F3_D33 %in% c("First","Secound") & F3_D34 == "Yes" ~ 1
+    ))
+  rm(FORM3,FORM2,W3)
+
+  
+  
+  
+
+    for (k in c("01","02","03","04")) {
+      LFS_Indicators_S <- LFS_Indicators_S %>% add_row(
+        Year                = year,
+        Season              = k,
+        Male_Employment     = sum(F3$IW_Seasonly[F3$Season == k & F3$Gender == "Male" & F3$Employed == 1],na.rm = true),
+        Female_Employment   = sum(F3$IW_Seasonly[F3$Season == k & F3$Gender == "Female" & F3$Employed == 1],na.rm = true),
+        Male_Unemployment   = sum(F3$IW_Seasonly[F3$Season == k & F3$Gender == "Male" & F3$Unemployed == 1],na.rm = true),
+        Female_Unemployment = sum(F3$IW_Seasonly[F3$Season == k & F3$Gender == "Female" & F3$Unemployed == 1],na.rm = true),
+        Rural_Employment    = sum(F3$IW_Seasonly[F3$Season == k & F3$Rural == 2 & F3$Employed == 1],na.rm = true),
+        Rural_Unemployment  = sum(F3$IW_Seasonly[F3$Season == k & F3$Rural == 2 & F3$Unemployed == 1],na.rm = true),
+        Urban_Employment    = sum(F3$IW_Seasonly[F3$Season == k & F3$Rural == 1 & F3$Employed == 1],na.rm = true),
+        Urban_Unemployment  = sum(F3$IW_Seasonly[F3$Season == k & F3$Rural == 1 & F3$Unemployed == 1],na.rm = true),
+      )
+    }
+  LFS_Indicators_Y <- LFS_Indicators_Y %>% add_row(
+    Year                = year,
+    Male_Employment     = mean(LFS_Indicators_S$Male_Employment[LFS_Indicators_S$Year==year]), 
+    Female_Employment   = mean(LFS_Indicators_S$Female_Employment[LFS_Indicators_S$Year==year]), 
+    Male_Unemployment   = mean(LFS_Indicators_S$Male_Unemployment[LFS_Indicators_S$Year==year]), 
+    Female_Unemployment = mean(LFS_Indicators_S$Female_Unemployment[LFS_Indicators_S$Year==year]), 
+    Rural_Employment    = mean(LFS_Indicators_S$Rural_Employment[LFS_Indicators_S$Year==year]), 
+    Rural_Unemployment  = mean(LFS_Indicators_S$Rural_Unemployment[LFS_Indicators_S$Year==year]),
+    Urban_Employment    = mean(LFS_Indicators_S$Urban_Employment[LFS_Indicators_S$Year==year]), 
+    Urban_Unemployment  = mean(LFS_Indicators_S$Urban_Unemployment[LFS_Indicators_S$Year==year])
+  )
+}
+
+
+
+LFS_Indicators_S <-  LFS_Indicators_S %>%
+  mutate(Total_Employment = Female_Employment + Male_Employment)%>%
+  mutate(Total_Unemployment = Female_Unemployment + Male_Unemployment)%>%
+  mutate(Total_Participation = Total_Employment + Total_Unemployment)%>%
+  mutate(Rural_Participation = Rural_Employment + Rural_Unemployment)%>%
+  mutate(Urban_Participation = Urban_Employment + Urban_Unemployment) %>%
+  mutate(Male_Participation = Male_Employment + Male_Unemployment)%>%
+  mutate(Female_Participation = Female_Employment + Female_Unemployment)
+
+LFS_Indicators_Y <-  LFS_Indicators_Y %>%
+  mutate(Total_Employment = Female_Employment + Male_Employment)%>%
+  mutate(Total_Unemployment = Female_Unemployment + Male_Unemployment)%>%
+  mutate(Total_Participation = Total_Employment + Total_Unemployment)%>%
+  mutate(Rural_Participation = Rural_Employment + Rural_Unemployment)%>%
+  mutate(Urban_Participation = Urban_Employment + Urban_Unemployment) %>%
+  mutate(Male_Participation = Male_Employment + Male_Unemployment)%>%
+  mutate(Female_Participation = Female_Employment + Female_Unemployment)
+
+
+saveRDS(LFS_Indicators_S,"C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes/Consistency/LFS_Indicators_S.RDS")
+saveRDS(LFS_Indicators_Y,"C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes/Consistency/LFS_Indicators_Y.RDS")
+
+
+```
+
+*   Calculated vs Reported (Demographic indc)
+
+```{r,eval=TRUE}
+
+Age10_Pop_C <- readRDS("C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes/Consistency/Age10_Pop_C.RDS")
+Total_Pop_C <- readRDS("C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes/Consistency/Total_Pop_C.RDS")
+
+Age10_Pop_R <- read_excel("C:/Users/ali/Dropbox/LFS Cleaning/GitHub/Files/Pop_Reported_Indicatores.xlsx" , sheet = "Age10_Population")
+Total_Pop_R <- read_excel("C:/Users/ali/Dropbox/LFS Cleaning/GitHub/Files/Pop_Reported_Indicatores.xlsx" , sheet = "Total_Population")
+
+
+Demog <- function(Demografic_var) {
+  
+  colors <- c("Calculated" = "black","Reported" = "red")
+  linetypes<- c("Calculated" = 2,"Reported" = 4)
+  shapes <- c("Calculated" = 15,"Reported" = 17)
+  
+  P<- ggplot(mapping = aes(x = Year ,y = eval(parse(text = Demografic_var))/1000000 ,group =1 ))+
+      geom_line(data = Total_Pop_C ,aes(color = "Calculated",lty = "Calculated") )+
+      geom_point(data = Total_Pop_C ,aes(color = "Calculated",shape = "Calculated"))+
+      geom_line(data = Total_Pop_R,aes(color="Reported",lty ="Reported" ))+
+      geom_point(data = Total_Pop_R,aes(color="Reported",shape = "Reported"))+ 
+      theme(
+        legend.position = "bottom",
+        legend.justification = "bottom",
+        legend.box.just = "right",
+        legend.margin = margin(6, 6, 6, 6),
+        axis.text.x = element_text( face = "bold",color = "black", size = 10),
+        plot.title = element_text(hjust = 0.5))+
+      labs( color = "Legend")+
+      guides(x = guide_axis(angle = 90))+
+      scale_color_manual("",values = colors)+
+      scale_linetype_manual("",values = linetypes)+
+      scale_shape_manual("",values = shapes)+
+      ylab(paste0(Demografic_var,"(Million)"))
+  return(P)
+  
+}
+
+```
+
+```{r,echo=FALSE,fig.height=10,fig.width=10}
+ggarrange(Demog("Total_population"),                                          ggarrange(Demog("Male_T"), Demog("Female_T"), ncol = 2),nrow = 2)
+```
+
+```{r,echo=FALSE,fig.height=10,fig.width=10}
+ggarrange(Demog("Urban_T"),                                          ggarrange(Demog("Urban_M"), Demog("Urban_F"), ncol = 2),nrow = 2)
+```
+
+```{r,echo=FALSE,fig.height=10,fig.width=10}
+ggarrange(Demog("Rural_T"),                                          ggarrange(Demog("Rural_M"), Demog("Rural_F"), ncol = 2),nrow = 2)
+```
+
+
+## Exporting DTA
+
+## Correcting Inconsistencies
+
+### Panel Inconsistency
+
+The labor force survey data were collected by the rotating panel method with a 2-2-2 pattern. In fact, the Statistical Center id Iran does not track people to collect data in the form of a panel. Instead, they track addresses where peoples live.
+
+Some of these people are present 1, some 2, some 3, and some 4 times in the sample. And when we look at people with the same _ID_, some observations, despite the same _ID_, have different characteristics such as age and gender. Therefore it can not be said that this person is the same as before in previous seasons or Years.
+
+Some of these inconsistencies are due to the movement of people. In fact, as mentioned, the Statistics Center of Iran refers to specific addresses overtime to collect this data, which made it possible that a new household lives in that address.
+
+*   **Correcting HHID**
+
+    To correcting inconsistencies due to household replacement, we need to correct HHID and assign a new HHID to the replaced household. To do So, we use The _F2Kol_Jaygozin_ Variable in _FORM2Kol_, which indicate if a family is replaced or not. You can see More detail About this part in the Appendix
+
+*   **Correcting IID**
+
+    As mentioned, Some of the Inconsistencies are due to household replacement which is corrected by assigning new HHID to The replaced households. Still, some of these inconsistencies remain after this correction, and we should define new IID for individuals according to their birth year and gender.
+
