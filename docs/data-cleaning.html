@@ -1131,8 +1131,8 @@ Marriage_Status
 <p>NR stands for “Not Related,” and we defined this value for all variables to get a true picture of the Missing data.</p>
 <p>In fact, if we examine the raw data, we see many missing observations, which may confuse us at first glance, but this is not the case. Most of these missings are because the question corresponding to these variables is not asked from some individuals in Sample.</p>
 <p>NR labels are created according to the following flowcharts. For example, questions 2-7 are not related to individuals who answer yes to question 1.</p>
-<p><img src="C:/Users/ali/Dropbox/LFS%20Cleaning/GitHub/NR%20Diagram_Befor_87.png" alt="NR Diagram For Year After 1387" />
-<img src="C:/Users/ali/Dropbox/LFS%20Cleaning/GitHub/NR%20Diagram_After_87.png" alt="NR Diagram For Year Before 1387" /></p>
+<p><img src="Figures/NR%20Diagram_Befor_87.png" alt="NR Diagram For Year After 1387" />
+<img src="Figures/NR%20Diagram_After_87.png" alt="NR Diagram For Year Before 1387" /></p>
 <p>For Creating NR labels, we should translate the above flowchart to R codes. For doing so, we run following code.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="data-cleaning.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (year <span class="cf">in</span> N) {</span>
 <span id="cb13-2"><a href="data-cleaning.html#cb13-2" aria-hidden="true" tabindex="-1"></a>  FORM3 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(Processd_data_Path,<span class="st">&quot;/&quot;</span>,year,<span class="st">&quot;/FORM3.RDS&quot;</span>))</span>
@@ -9789,7 +9789,7 @@ Literacy
 </div>
 <div id="creating-nr-1" class="section level4" number="5.8.2.3">
 <h4><span class="header-section-number">5.8.2.3</span> <strong>Creating NR</strong></h4>
-<p><img src="C:/Users/ali/Dropbox/LFS%20Cleaning/GitHub/NR_F2_Diagram.png" /></p>
+<p><img src="Figures/NR_F2_Diagram.png" /></p>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
