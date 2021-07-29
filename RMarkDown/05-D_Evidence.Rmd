@@ -1,5 +1,8 @@
 # Descriptive Evidence
 
+![](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/Employment Status.png)
+
+
 ## Employment
 
 ```{r,eval = FALSE}

@@ -330,8 +330,8 @@ NR labels are created according to the following flowcharts. For example, questi
 
 
 
-![NR Diagram For Year After 1387](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/NR Diagram_Befor_87.png)
-![NR Diagram For Year Before 1387](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/NR Diagram_After_87.png)
+![NR Diagram For Year After 1387](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/NR Diagram_Befor_87.png)
+![NR Diagram For Year Before 1387](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/NR Diagram_After_87.png)
 
 For Creating NR labels, we should translate the above flowchart to R codes. For doing so, we run following code. 
 
@@ -724,7 +724,7 @@ D %>%
 
 #### **Creating NR**
 
-![](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/NR_F2_Diagram.png)
+![](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/NR_F2_Diagram.png)
 
 ```{r,echo=FALSE}
 D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM2JOZ_NA_Before")
@@ -984,17 +984,17 @@ Age10_Pop_R <- read_excel("C:/Users/ali/Dropbox/LFS Cleaning/GitHub/Files/Pop_Re
 Total_Pop_R <- read_excel("C:/Users/ali/Dropbox/LFS Cleaning/GitHub/Files/Pop_Reported_Indicatores.xlsx" , sheet = "Total_Population")
 
 
-Demog <- function(Demografic_var) {
+Demog <- function(Demografic_var,xlab ="Year",ylab = Demografic_var, title ="",df_1,df_2) {
   
   colors <- c("Calculated" = "black","Reported" = "red")
   linetypes<- c("Calculated" = 2,"Reported" = 4)
   shapes <- c("Calculated" = 15,"Reported" = 17)
   
   P<- ggplot(mapping = aes(x = Year ,y = eval(parse(text = Demografic_var))/1000000 ,group =1 ))+
-      geom_line(data = Total_Pop_C ,aes(color = "Calculated",lty = "Calculated") )+
-      geom_point(data = Total_Pop_C ,aes(color = "Calculated",shape = "Calculated"))+
-      geom_line(data = Total_Pop_R,aes(color="Reported",lty ="Reported" ))+
-      geom_point(data = Total_Pop_R,aes(color="Reported",shape = "Reported"))+ 
+      geom_line(data = df_1 ,aes(color = "Calculated",lty = "Calculated") )+
+      geom_point(data = df_1 ,aes(color = "Calculated",shape = "Calculated"))+
+      geom_line(data = df_2,aes(color="Reported",lty ="Reported" ))+
+      geom_point(data = df_2,aes(color="Reported",shape = "Reported"))+ 
       theme(
         legend.position = "bottom",
         legend.justification = "bottom",
@@ -1002,30 +1002,50 @@ Demog <- function(Demografic_var) {
         legend.margin = margin(6, 6, 6, 6),
         axis.text.x = element_text( face = "bold",color = "black", size = 10),
         plot.title = element_text(hjust = 0.5))+
-      labs( color = "Legend")+
+      labs(title = title, x=xlab , y=ylab  ,color = "Legend")+
       guides(x = guide_axis(angle = 90))+
       scale_color_manual("",values = colors)+
       scale_linetype_manual("",values = linetypes)+
-      scale_shape_manual("",values = shapes)+
-      ylab(paste0(Demografic_var,"(Million)"))
+      scale_shape_manual("",values = shapes)
   return(P)
   
 }
 
 ```
 
-```{r,echo=FALSE,fig.height=10,fig.width=10}
-ggarrange(Demog("Total_population"),                                          ggarrange(Demog("Male_T"), Demog("Female_T"), ncol = 2),nrow = 2)
-```
+
+
 
 ```{r,echo=FALSE,fig.height=10,fig.width=10}
-ggarrange(Demog("Urban_T"),                                          ggarrange(Demog("Urban_M"), Demog("Urban_F"), ncol = 2),nrow = 2)
+Demog("Total_population",xlab = "Year",ylab = "Population(Million)",title = "Total Population",Total_Pop_C,Total_Pop_R)
 ```
 
-```{r,echo=FALSE,fig.height=10,fig.width=10}
-ggarrange(Demog("Rural_T"),                                          ggarrange(Demog("Rural_M"), Demog("Rural_F"), ncol = 2),nrow = 2)
+```{r,echo=FALSE,fig.height=5,fig.width=10}
+ggpubr::ggarrange(Demog("Male_T",xlab = "Year",ylab = "Population(Million)",title = "Male Population",Total_Pop_C,Total_Pop_R),
+                  Demog("Female_T",xlab = "Year",ylab = "Population(Million)",title = "Female Population",Total_Pop_C,Total_Pop_R),
+                  ncol = 2,nrow = 1)
 ```
 
+```{r,fig.width= 10 ,fig.height=10,echo=FALSE}
+Demog("Urban_T",xlab = "Year",ylab = "Population(Million)",title = "Urban  Population",Total_Pop_C,Total_Pop_R)
+```
+
+```{r,fig.width=10,fig.height=5,echo=FALSE}
+ggpubr::ggarrange(Demog("Urban_M",xlab = "Year",ylab = "Population(Million)",title = "Urban Male  Population",Total_Pop_C,Total_Pop_R),
+                  Demog("Urban_F",xlab = "Year",ylab = "Population(Million)",title = "Urban Female Population", Total_Pop_C,Total_Pop_R),
+                  ncol = 2,nrow = 1)
+```
+
+```{r,fig.width=10,fig.height=10,echo=FALSE}
+Demog("Rural_T",xlab = "Year",ylab = "Population(Million)",title = "Rural Population",Total_Pop_C,Total_Pop_R)
+
+```
+
+```{r,fig.height=5,fig.width=10,echo=FALSE}
+ggpubr::ggarrange(Demog("Rural_M",xlab = "Year",ylab = "Population(Million)",title = "Rural Male Population",Total_Pop_C,Total_Pop_R),
+                  Demog("Rural_F",xlab = "Year",ylab = "Population(Million)",title = "Rural Female Population",Total_Pop_C,Total_Pop_R),
+                  ncol = 2,nrow = 1)
+```
 
 ## Exporting DTA
 

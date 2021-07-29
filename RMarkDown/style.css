@@ -8,7 +8,9 @@ p code {
 pre {
   word-break: normal;
   word-wrap: normal;
+  max-height: 75vh !important;
 }
 pre code {
-  white-space: inherit;
+  white-space: inherit
+  
 }
