@@ -1,6 +1,4 @@
 
-Files_paths      = "C:/Users/pc/Dropbox/Research/Labor Market/LFS Cleaning/Files" 
-#Files_paths       = "C:/Users/ali/Dropbox/LFS Cleaning/Files" #path of files expect raw data
 Path              = "F:/LFS"               
 Raw_data          = "Raw data"
 Imported_data     = "Imported data"
@@ -10,8 +8,6 @@ Col_names         = "LFS_Col_name.xlsx"
 F2J_Labels        = "Form2joz_Labels.xlsx"
 F3_Labels         = "Form3_Labels.xlsx"
 Season            = c("01","02","03","04")
-First_year        = 84L
-Last_year         = 98L
 N                 = First_year:Last_year
 
 Raw_data_path          = paste0(Path,"/",Raw_data)

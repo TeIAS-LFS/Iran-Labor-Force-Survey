@@ -638,12 +638,14 @@ FORM2JOZ <- FORM2JOZ%>%
 In some years, F2_D01, which indicates the row number of a household member, is one digit which should be in a two-digit format like as other years and we correct it by the following  code
 
 ```{r, eval = FALSE}
-    FORM2JOZ<- FORM2JOZ%>%
-      mutate(Pkey  = case_when(
-        nchar(F2_D01)== 1 ~ paste0(PKEY,"0",F2_D01),
-        nchar(F2_D01)== 2 ~ paste0(PKEY, F2_D01)
-      ))
-
+  FORM2JOZ<- FORM2JOZ%>%
+    mutate(Pkey = case_when(
+      nchar(F2_D01)== 1 ~ paste0(PKEY,"0",F2_D01),
+      nchar(F2_D01)== 2 ~ paste0(PKEY, F2_D01)
+    )) %>% select(-PKEY)%>%
+    mutate(Age = ifelse(Age %in% c("**","-2"),"101",Age))%>%
+    mutate_at(vars(Age),as.integer)%>%
+    mutate(Age = ifelse(Age >=101 , 101 , Age))
 ```
 
 ### Changing Type, Renaming Labels,  Creating NR
@@ -653,12 +655,24 @@ The type and value of variables changed to the desired one in the way as explain
 
 
 ```{r,eval=FALSE}
-  FORM2JOZ <- FORM2JOZ%>%
-    mutate_at(vars(Pkey,F2_D01),as.character)%>%
-    mutate_at(vars(Birth_Year,Birth_Month,Age),as.integer)%>%
-    mutate_at(vars(Relation,Gender,Nationality,Residence_Status,
-                   Residence_Duration,F2_D11,F2_D12,F2_D13,F2_D14,Student,
-                   Literacy,Degree,Field_Study,Marriage_Status),as.factor)
+
+F2J_colnames <- read_xlsx(Col_name_path,sheet = "FORM2JOZ")
+F2J_RDS_Path <- RDS_path[str_detect(RDS_path,"FORM2JOZ.RDS|9802|9803|9804")]
+
+Factor_vars <- c("Relation","Gender","Birth_Month","Nationality","Residence_Status",
+                 "Residence_Duration","F2_D11","F2_D12","F2_D13","F2_D14","Student",
+                 "Literacy","Degree","Field_Study","Marriage_Status")
+
+Numeric_vars <- c("Birth_Year","Age")
+
+Character_vars <- c("Pkey","F2_D01")
+
+
+FORM2JOZ <- FORM2JOZ%>%
+    mutate_at(vars(Factor_vars[Factor_vars %in% colnames(FORM2JOZ)]),as.factor)%>%
+    mutate_at(vars(Numeric_vars[Numeric_vars %in% colnames(FORM2JOZ)]),as.integer)%>%
+    mutate_at(vars(Character_vars[Character_vars %in% colnames(FORM2JOZ)]),as.character)%>%
+    select(colnames(FORM2JOZ)[colnames(FORM2JOZ)%in% c(colnames(F2J_colnames),"Pkey")])
 
 ```
 
@@ -714,10 +728,11 @@ D %>%
     Levels <- read_xlsx(F2J_Labels_path,sheet = Fac_vars[i])
     Levels[Levels == "space"] <- " "
     Levels[Levels == "2space"] <- "  "
+    Levels[Levels == "0space"] <- ""
     Levels_Value <- colnames(Levels)[!str_detect(colnames(Levels),"\\...")]
     for (j in 2:length(Levels_Value)) {
-      L <- levels(eval(parse(text = paste0("FORM2JOZ$",Fac_vars[i])))) == eval(parse(text = paste0("Levels$",Levels_Value[j])))[Levels$Year == year]
-      eval(parse(text =paste0("levels(","FORM2JOZ$",Fac_vars[i],")[L]"," <- ","Levels$",Levels_Value[j],"[1]")))
+      L <-  eval(parse(text = paste0("FORM2JOZ$",Fac_vars[i],"==","Levels$",Levels_Value[j],"[Levels$Year ==",year,"]")))          
+      eval(parse(text = paste0("FORM2JOZ$",Fac_vars[i],"[L]"," <- ","Levels$",Levels_Value[j],"[1]")))
     }
   }
 ```
@@ -725,6 +740,8 @@ D %>%
 #### **Creating NR**
 
 ![](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/NR_F2_Diagram.png)
+
+** FORM2JOZ NAs Before Creating NR
 
 ```{r,echo=FALSE}
 D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM2JOZ_NA_Before")
@@ -735,6 +752,9 @@ D %>%
   scroll_box(width = "100%",height = "400px")
 
 ```
+
+
+FORM2JOZ's NAs After Creating NR
 
 ```{r,echo=FALSE}
 D <- read_xlsx("C:/Users/ali/Dropbox/LFS Cleaning/Files/Tables.xlsx",sheet = "FORM2JOZ_NA_After")
@@ -749,9 +769,126 @@ D %>%
 
 ## FORM2KOL Cleaning
 
+### Renaming variables 
+```{r,eval=FALSE}
+
+F2K_colnames <- read_xlsx(Col_name_path,sheet = "FORM2KOL")
+
+F2K_RDS_Path <- RDS_path[str_detect(RDS_path,"FORM2KOL.RDS|9802|9803|9804")]
+
+for (year in First_year:Last_year) {
+  index <- match(F2K_colnames$Year_Season[str_detect(F2K_colnames$Year_Season,paste0("^",year))],F2K_colnames$Year_Season)
+  FORM2KOL <- tibble()
+  
+  for (j in index) {
+    F2K <- readRDS(F2K_RDS_Path[str_detect(F2K_RDS_Path, as.character(F2K_colnames$Year_Season[j]))])
+    for (i in 2:length(colnames(F2K_colnames))) {
+      names(F2K)[names(F2K) == eval(parse(text=paste0("F2K_colnames","$",colnames(F2K_colnames)[i])))[j]] <- colnames(F2K_colnames)[i]
+    }
+    F2K <- F2K %>%
+      mutate_all(as.character)
+    FORM2KOL <- bind_rows(FORM2KOL,F2K)
+  }
+    saveRDS(FORM2KOL,paste0(Processd_data_Path,"/",year,"/","FORM2KOL.RDS"))
+
+  }
+
+```
+
+### integrating data
+
+```{r,eval=FALSE}
+
+    if (year == 84) {
+      FORM2KOL <- FORM2KOL%>%
+        mutate(Season = ifelse((str_sub(YSHHID,3,4) %in% c("01","02","03")),"01",
+                               ifelse((str_sub(YSHHID,3,4)%in% c("04","05","06")),"02",
+                                      ifelse((str_sub(YSHHID,3,4)%in% c("07","08","09")),
+                                             "03","04"))))%>%
+        mutate(YSHHID = paste0(str_sub(YSHHID,1,2),Season,str_sub(YSHHID,5,12)))%>%
+        select(-Season)
+      
+    }
+
+    saveRDS(FORM2KOL,paste0(Processd_data_Path,"/",year,"/","FORM2KOL.RDS"))
+
+
+
+```
 ## W3 Cleaning
 
+
+
 ### Renaming variables and integrating data
+
+```{r,eval=FALSE}
+W3_colnames <- read_xlsx(Col_name_path,sheet = "W3")
+W3_RDS_Path <- RDS_path[str_detect(RDS_path,"W3.RDS|9802|9803|9804")]
+
+for (year in First_year:Last_year) {
+  index <- match(W3_colnames$Year_Season[str_detect(W3_colnames$Year_Season,paste0("^",year))],W3_colnames$Year_Season)
+  W3 <- tibble()
+  for (j in index) {
+    ww <- readRDS(W3_RDS_Path[str_detect(W3_RDS_Path, as.character(W3_colnames$Year_Season[j]))])
+    for (i in 2:length(colnames(W3_colnames))) {
+      names(ww)[names(ww) == eval(parse(text=paste0("W3_colnames","$",colnames(W3_colnames)[i])))[j]] <- colnames(W3_colnames)[i]
+    }
+    ww <- ww %>%
+      mutate_all(as.character)
+    W3 <- bind_rows(W3,ww)
+  }
+  
+  
+    if (year == 84) {
+      W3 <- W3%>%
+        mutate(Season = ifelse(str_sub(PKEY,3,4) %in% c("01","02","03"),"01",
+                               ifelse(str_sub(PKEY,3,4) %in% c("04","05","06"),"02",
+                                      ifelse(str_sub(PKEY,3,4) %in% c("07","08","09"),"03","04"))))%>%
+        mutate(PKEY = paste0(str_sub(PKEY,1,2),Season,str_sub(PKEY,5,12)))%>%
+        select(-Season)
+    }
+  
+  
+  if (year == 97) {
+    FORM2JOZ <- readRDS(paste0(Processd_data_Path,"/",year,"/FORM2JOZ.RDS"))
+    
+    FORM2JOZ <- FORM2JOZ%>%
+      dplyr::rename("AGE" = "Age",
+                    "GENDER" = "Gender")%>%
+      select(Pkey,GENDER,AGE)
+    
+    W3 <- W3%>%
+      mutate(Pkey = case_when(
+        nchar(F2_D01)==1~ paste0(PKEY,"0",F2_D01),
+        nchar(F2_D01)==2~ paste0(PKEY,F2_D01)))%>%
+      left_join(FORM2JOZ,by = "Pkey")
+    
+    rm(FORM2JOZ)
+  }
+  
+  W3 <- W3%>%
+    mutate(AGE =ifelse(AGE %in% c("**","-2"),"101",AGE),
+           F2_D01 = ifelse(nchar(F2_D01)==1,paste0("0",F2_D01),F2_D01),
+           Year = str_sub(PKEY,1,2),
+           Season = str_sub(PKEY,3,4),
+           Province_ID = str_sub(PKEY,5,6),
+           Rural = str_sub(PKEY ,7,7),
+           Pkey = paste0(PKEY,F2_D01),
+           HHID = case_when(
+             year %in% c("84","85","86","87") ~ paste0("01",str_sub(Pkey,5,12)),
+             year %in% c("88","89","90","91") ~ paste0("02",str_sub(Pkey,5,12)),
+             year %in% c("92","93","94","95","96") ~ paste0("03",str_sub(Pkey,5,12)),
+             year %in% c("97","98") ~ paste0("04",str_sub(Pkey,5,12))))%>%
+    mutate(IID = paste0(HHID,F2_D01),
+           Adj_IW_Seasonly = IW_Seasonly)%>%
+    select(-PKEY)%>%
+    mutate_at(vars(AGE,IW_Seasonly,Adj_IW_Seasonly),as.numeric)
+  
+     saveRDS(W3,paste0(Processd_data_Path,"/",year,"/W3.RDS"))
+
+}
+```
+
 
 ### WeigthAdjusment
 
@@ -759,6 +896,81 @@ As mentioned, the weight of each observation indicates that each person in the s
 
 But when an Accurate population reveals years later, when can have an intercensal estimate of population, which is a better estimate than postcensal estimates. For this purpose, we divide the population into 12 groups based on being male or female, urban or rural, and three age groups ( below 10 years, 10-64 years and more than 65 years). And calculate the adjustment coefficient as below:
 
+```{r,eval=FALSE}
+
+Intercensal <- read_xlsx(paste0(Files_paths,"/","Cencus75_95.xlsx"),sheet = "Intercensal_pop")
+
+
+for (year in First_year:Last_year) {
+
+  W3<- readRDS(paste0(Processd_data_Path,"/",year,"/W3.RDS"))
+  
+  W3 <- W3%>%
+    mutate(Age_Cat = case_when(
+      AGE <= 9 ~ "0-9",
+      AGE >=10 & AGE<=64 ~"10-64",
+      AGE >=65 ~ "65+"
+    ))%>%
+    mutate_at(vars(GENDER,Rural,Age_Cat),as.factor)%>%
+    group_by(Age_Cat,GENDER,Rural)%>%
+    dplyr::mutate(CSP = 0.25*sum(IW_Seasonly,na.rm = T))%>%
+    ungroup()%>%
+    mutate(R_Sub_Pop = NA)
+
+    
+    W3$C_Sub_Pop <- NULL
+    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE <=9],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE <=9],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE <=9],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE <=9],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == '2' & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE >=65],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE >=65],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == '2' & W3$AGE >=65],na.rm = true)
+    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65],na.rm = true)
+    
+
+  
+    if (year>=85 & year <=95) {
+      W3$R_Sub_Pop <- NULL
+      W3$R_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE <=9] <- Intercensal$Male_0_9_U[Intercensal$Year == year]
+      W3$R_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE <=9] <- Intercensal$Female_0_9_U[Intercensal$Year == year]
+      W3$R_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE <=9] <- Intercensal$Male_0_9_R[Intercensal$Year == year ]
+      W3$R_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE <=9] <- Intercensal$Female_0_9_R[Intercensal$Year == year ]
+      W3$R_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)] <- Intercensal$Male_10_64_U[Intercensal$Year== year]
+      W3$R_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)] <- Intercensal$Female_10_64_U[Intercensal$Year== year]
+      W3$R_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)] <- Intercensal$Male_10_64_R[Intercensal$Year== year]
+      W3$R_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)] <- Intercensal$Female_10_64_R[Intercensal$Year== year]
+      W3$R_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE >=65] <- Intercensal$Male_65_U[Intercensal$Year== year]
+      W3$R_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE >=65] <- Intercensal$Female_65_U[Intercensal$Year== year]
+      W3$R_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE >=65] <- Intercensal$Male_65_R[Intercensal$Year== year]
+      W3$R_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65] <- Intercensal$Female_65_R[Intercensal$Year== year]   
+      
+    }
+    
+    W3<- W3 %>%
+      mutate(Adj_Coef = R_Sub_Pop/C_Sub_Pop)%>%
+      mutate(Adj_IW_Seasonly = ifelse(!is.na(Adj_Coef),Adj_Coef*IW_Seasonly,Adj_IW_Seasonly))
+
+
+    
+    W3_A<- W3%>%
+      select(Pkey,Year,Season,HHID,IID,Province_ID, Rural,IW_Seasonly,Adj_IW_Seasonly)
+    
+    W3_EX <- W3%>%
+      select(-colnames(W3_A),Pkey)%>%
+      select(Pkey,everything())
+    
+    saveRDS(W3_A,paste0(Processd_data_Path,"/",year,"/","W3.RDS"))
+    saveRDS(W3_EX,paste0(Processd_data_Path,"/",year,"/","W3_EX.RDS"))
+    
+
+}
+
+```
 
 
 

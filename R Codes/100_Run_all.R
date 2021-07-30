@@ -4,14 +4,14 @@ rm(list=ls())
 #             your files and your data stored.
 
 #code_path = "C:/Users/pc/Dropbox/Research/Labor Market/LFS Cleaning/R Codes"
-code_path  = "C:/Users/ali/Dropbox/LFS Cleaning/R Codes"
-Files_paths       = "G:/R Mark down/LFS_Break down code/Files" #path of files expect raw data
+code_path  = "C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes"
+Files_paths       = "C:/Users/ali/Dropbox/LFS Cleaning/GitHub/Files" #path of files expect raw data
 Path              = "F:/LFS" 
 First_year        = 84L
 Last_year         = 98L
 
 
-source(paste0(code_path,"/","101_modify_settings.R"))
+source(paste0(code_path,"/","101_Initializing.R"))
 source(paste0(code_path,"/","110_Installing_packages.R"))
 source(paste0(code_path,"/","120_Building_directory.R"))
 #source(paste0(code_path,"/","130_Downloding_rawdata.R"))

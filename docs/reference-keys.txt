@@ -54,3 +54,5 @@ tab:unnamed-chunk-26
 tab:unnamed-chunk-27
 tab:unnamed-chunk-29
 tab:unnamed-chunk-30
+renaming-variables
+integrating-data
