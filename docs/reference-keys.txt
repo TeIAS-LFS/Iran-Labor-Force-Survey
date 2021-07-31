@@ -32,8 +32,11 @@ changing-type
 unknowns-and-label-assimilation
 creating-nr-1
 form2kol-cleaning
+renaming-variables
+integrating-data
 w3-cleaning
-renaming-variables-and-integrating-data-2
+renaming-variables-1
+integrating-data-1
 weigthadjusment
 data-validation
 exporting-dta
@@ -54,5 +57,3 @@ tab:unnamed-chunk-26
 tab:unnamed-chunk-27
 tab:unnamed-chunk-29
 tab:unnamed-chunk-30
-renaming-variables
-integrating-data

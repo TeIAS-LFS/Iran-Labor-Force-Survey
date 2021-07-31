@@ -769,7 +769,11 @@ D %>%
 
 ## FORM2KOL Cleaning
 
+
 ### Renaming variables 
+
+As before, we convert the names of the variables in different years into single names as follows. More information about the names of the variables during the years 84 to 98 can be found in the _LFS_colnames_ Excel file.
+
 ```{r,eval=FALSE}
 
 F2K_colnames <- read_xlsx(Col_name_path,sheet = "FORM2KOL")
@@ -797,6 +801,9 @@ for (year in First_year:Last_year) {
 
 ### integrating data
 
+Like before also in this data set, the third and fourth digits of the Pkey variable indicate the month, not season, which we convert to season like before
+
+
 ```{r,eval=FALSE}
 
     if (year == 84) {
@@ -819,8 +826,8 @@ for (year in First_year:Last_year) {
 
 
 
-### Renaming variables and integrating data
-
+### Renaming variables
+This part is the same as before, and you can get more information about this part in previous sections and _LFS_Colnames_ excel files about the name of variables during the years.
 ```{r,eval=FALSE}
 W3_colnames <- read_xlsx(Col_name_path,sheet = "W3")
 W3_RDS_Path <- RDS_path[str_detect(RDS_path,"W3.RDS|9802|9803|9804")]
@@ -837,7 +844,36 @@ for (year in First_year:Last_year) {
       mutate_all(as.character)
     W3 <- bind_rows(W3,ww)
   }
-  
+  saveRDS(W3,paste0(Processd_data_Path,"/",year,"W3.RDS"))
+}
+```
+
+
+### integrating data
+For integrating this data set, we should do the following step :
+
+1.    Correcting third and fourth digits of Pkey
+2.    Adding Age and Gender variables to data set in year 97
+3.    Correcting F2_D01
+
+      F2_D01 indicates the row of members in a household that should be two-digit, but in some years, it is stored in one digit, and we convert it to two-digit format as shown in the following codes.
+      
+4.    Creating some variable from Pkey which mentioned bellow
+      *   Year
+      *   Season
+      *   Province ID
+      *   Rural/Urban
+      *   HHID
+      *   IID
+      
+      The first and second digits of Pkey indicate the year. The third and fourth digits indicate Season, the Fifth and sixth digits indicate Province  Id, and seventh digits indicate living in rural or Urban areas.
+
+
+```{r,eval=FALSE}
+
+
+for (year in First_year:Last_year) {
+
   
     if (year == 84) {
       W3 <- W3%>%
@@ -855,6 +891,7 @@ for (year in First_year:Last_year) {
     FORM2JOZ <- FORM2JOZ%>%
       dplyr::rename("AGE" = "Age",
                     "GENDER" = "Gender")%>%
+      mutate(GENDER = ifelse(GENDER =="Male","1","2"))%>%
       select(Pkey,GENDER,AGE)
     
     W3 <- W3%>%
@@ -896,6 +933,11 @@ As mentioned, the weight of each observation indicates that each person in the s
 
 But when an Accurate population reveals years later, when can have an intercensal estimate of population, which is a better estimate than postcensal estimates. For this purpose, we divide the population into 12 groups based on being male or female, urban or rural, and three age groups ( below 10 years, 10-64 years and more than 65 years). And calculate the adjustment coefficient as below:
 
+$$
+\text { Adjustment coefficient }_{s}=\frac{\text { Number of people in the group s according to intercensal estimation }}{\text { Number of people in group s according to data }}
+$$
+
+
 ```{r,eval=FALSE}
 
 Intercensal <- read_xlsx(paste0(Files_paths,"/","Cencus75_95.xlsx"),sheet = "Intercensal_pop")
@@ -917,21 +959,6 @@ for (year in First_year:Last_year) {
     ungroup()%>%
     mutate(R_Sub_Pop = NA)
 
-    
-    W3$C_Sub_Pop <- NULL
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE <=9],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE <=9],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE <=9],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE <=9],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == '2' & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE >=65],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE >=65],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == '2' & W3$AGE >=65],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65],na.rm = true)
-    
 
   
     if (year>=85 & year <=95) {
@@ -952,7 +979,7 @@ for (year in First_year:Last_year) {
     }
     
     W3<- W3 %>%
-      mutate(Adj_Coef = R_Sub_Pop/C_Sub_Pop)%>%
+      mutate(Adj_Coef = R_Sub_Pop/CSP)%>%
       mutate(Adj_IW_Seasonly = ifelse(!is.na(Adj_Coef),Adj_Coef*IW_Seasonly,Adj_IW_Seasonly))
 
 
@@ -972,12 +999,149 @@ for (year in First_year:Last_year) {
 
 ```
 
+Now adjusted weight drive from multiplying adjustment coefficient to the not adjusted weight 
 
+Below we create two datasets for these twelve subpopulations with adjusted and not adjusted weight and depict series against each other to understand what is happening here.
 
-<img src="https://render.githubusercontent.com/render/math?math=\text{Adjustment coefficient}_{s} = \frac{\text{Number of people in the group s according to intercensal estimation}}{\text{Number of people in group s according to data}}">
+```{r,eval=FALSE}
+Sub_Pop <- tibble(
+  Year            = character(),
+  Total           = numeric(),
+  Male_0_9_U      = numeric(),
+  Male_10_64_U    = numeric(),
+  Male_65_U       = numeric(),
+  Female_0_9_U    = numeric(),
+  Female_10_64_U  = numeric(),
+  Female_65_U     = numeric(),
+  Male_0_9_R      = numeric(),
+  Male_10_64_R    = numeric(),
+  Male_65_R       = numeric(),
+  Female_0_9_R    = numeric(),
+  Female_10_64_R  = numeric(),
+  Female_65_R     = numeric(),
+)
 
+Adj_Sub_Pop <- tibble(
+  Year            = character(),
+  Total           = numeric(),
+  Male_0_9_U      = numeric(),
+  Male_10_64_U    = numeric(),
+  Male_65_U       = numeric(),
+  Female_0_9_U    = numeric(),
+  Female_10_64_U  = numeric(),
+  Female_65_U     = numeric(),
+  Male_0_9_R      = numeric(),
+  Male_10_64_R    = numeric(),
+  Male_65_R       = numeric(),
+  Female_0_9_R    = numeric(),
+  Female_10_64_R  = numeric(),
+  Female_65_R     = numeric(),
+)
 
-Now adjusted weight drive from multiplying adjustment coefficient to the not adjusted weight
+for (i in 85 :95) {
+  W3 <- readRDS(paste0(Processd_data_Path,"/",i,"/W3.RDS"))
+  W3_EX  <- readRDS(paste0(Processd_data_Path,"/",i,"/W3_EX.RDS"))
+  
+  W3_EX <- W3_EX%>%
+    select(Pkey,GENDER,AGE)
+  W3 <- left_join(W3,W3_EX,by="Pkey")
+  rm(W3_EX)
+  
+  Sub_Pop  <-  Sub_Pop %>% add_row(
+    Year           = paste0(i),
+    Total           = 0.25*sum(W3$IW_Seasonly,na.rm = true),
+    Male_0_9_U      = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE <=9],na.rm = true),
+    Male_10_64_U    = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true),
+    Male_65_U       = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE >=65],na.rm = true),
+    Female_0_9_U    = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE <=9],na.rm = true),
+    Female_10_64_U  = 0.25*sum(W3$IW_Seasonly[W3$GENDER == '2' & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true),
+    Female_65_U     = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE >=65],na.rm = true),
+    Male_0_9_R      = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE <=9],na.rm = true),
+    Male_10_64_R    = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true),
+    Male_65_R       = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == '2' & W3$AGE >=65],na.rm = true),
+    Female_0_9_R    = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE <=9],na.rm = true),
+    Female_10_64_R  = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true),
+    Female_65_R     = 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65],na.rm = true),
+    
+  )
+  
+  Adj_Sub_Pop  <-  Adj_Sub_Pop %>% add_row(
+    Year           = paste0(i),
+    Total           = 0.25*sum(W3$Adj_IW_Seasonly,na.rm = true),
+    Male_0_9_U      = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE <=9],na.rm = true),
+    Male_10_64_U    = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true),
+    Male_65_U       = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE >=65],na.rm = true),
+    Female_0_9_U    = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE <=9],na.rm = true),
+    Female_10_64_U  = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == '2' & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true),
+    Female_65_U     = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE >=65],na.rm = true),
+    Male_0_9_R      = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE <=9],na.rm = true),
+    Male_10_64_R    = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "1" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true),
+    Male_65_R       = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "1" & W3$Rural == '2' & W3$AGE >=65],na.rm = true),
+    Female_0_9_R    = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE <=9],na.rm = true),
+    Female_10_64_R  = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true),
+    Female_65_R     = 0.25*sum(W3$Adj_IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65],na.rm = true),
+  )
+}
+
+```
+
+```{r}
+# Define plot function
+
+LFSP <- function(Var,xlab = "Year",ylab = "Population (Million)",Title = ""){
+  colors <- c("Not_adjusted" = "black","Adjusted" = "red")
+  linetype  <-  c( "Not_adjusted" = 2 , "Adjusted" = 4 )
+  shapes <- c("Not_adjusted" = 15,"Adjusted" = 17)
+  P <- ggplot(mapping = aes(x = Year ,y = eval(parse(text = Var)) /1000000,group = 1))+
+    geom_line(data = Sub_Pop, aes(color = "Not_adjusted" , lty = "Not_adjusted"))+
+    geom_point(data = Sub_Pop,aes(color = "Not_adjusted" , shape = "Not_adjusted"))+
+    geom_line(data = Adj_Sub_Pop, aes(color =  "Adjusted" , lty = "Adjusted"))+
+    geom_point(data = Adj_Sub_Pop, aes(color =  "Adjusted" , shape = "Adjusted"))+
+    theme(
+      legend.position = "bottom",
+      legend.justification = "center",
+      legend.box.just = "bottom",
+      legend.margin = margin(6, 6, 6, 6),
+      axis.text.x = element_text( face = "bold",color = "black", size = 10),
+      plot.title = element_text(hjust = 0.5))+
+    labs(title = Title, x = xlab, y = ylab,color = "Legend")+
+    guides(x = guide_axis(angle = 90))+
+    scale_linetype_manual("",values = linetype)+
+    scale_color_manual("",values = colors)+
+    scale_shape_manual("",values = shapes)
+  return(P)
+
+}
+```
+
+```{r,fig.width=10,fig.height=10}
+
+Adj_Sub_Pop<- readRDS("C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes/Consistency/Adj_Sub_Pop.RDS")
+Sub_Pop<- readRDS("C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes/Consistency/Sub_Pop.RDS")
+
+P1<- LFSP("Male_0_9_U",Title = "Urban Male Population Less Than 10 Years")
+P2<- LFSP("Female_0_9_U",Title = "Urban Female Population Less Than 10 Years")
+P3 <- LFSP("Male_0_9_R",Title = "Rural Male Population Less Than 10 Years")
+P4 <- LFSP("Female_0_9_R",Title = "Rural Female Population Less Than 10 Years")
+ggpubr::ggarrange(P1,P2,P3,P4,ncol = 2,nrow = 2)
+```
+```{r,fig.width=10,fig.height=10}
+P1<- LFSP("Male_10_64_U",Title = "Urban Male Population Age 10 to 64")
+P2<- LFSP("Female_10_64_U",Title = "Urban Female Population Age 10 to 64")
+P3 <- LFSP("Male_10_64_R",Title = "Rural Male Population Age 10 to 64")
+P4 <- LFSP("Female_10_64_R",Title = "Rural Female Population Age 10 to 64")
+ggpubr::ggarrange(P1,P2,P3,P4,ncol = 2,nrow = 2)
+
+```
+
+```{r,fig.width=10,fig.height=10}
+P1<- LFSP("Male_65_U",Title = "Urban Male Population Over 65 years")
+P2<- LFSP("Female_65_U",Title = "Urban Female Population Over 65 years")
+P3 <- LFSP("Male_65_R",Title = "Rural Male Population Over 65 years")
+P4 <- LFSP("Female_65_R",Title = "Rural Female Population Over 65 years")
+ggpubr::ggarrange(P1,P2,P3,P4,ncol = 2,nrow = 2)
+
+```
 
 ## Data Validation
 
@@ -1228,36 +1392,20 @@ Demog <- function(Demografic_var,xlab ="Year",ylab = Demografic_var, title ="",d
 
 
 
-```{r,echo=FALSE,fig.height=10,fig.width=10}
-Demog("Total_population",xlab = "Year",ylab = "Population(Million)",title = "Total Population",Total_Pop_C,Total_Pop_R)
-```
-
-```{r,echo=FALSE,fig.height=5,fig.width=10}
-ggpubr::ggarrange(Demog("Male_T",xlab = "Year",ylab = "Population(Million)",title = "Male Population",Total_Pop_C,Total_Pop_R),
-                  Demog("Female_T",xlab = "Year",ylab = "Population(Million)",title = "Female Population",Total_Pop_C,Total_Pop_R),
-                  ncol = 2,nrow = 1)
-```
-
-```{r,fig.width= 10 ,fig.height=10,echo=FALSE}
-Demog("Urban_T",xlab = "Year",ylab = "Population(Million)",title = "Urban  Population",Total_Pop_C,Total_Pop_R)
-```
-
-```{r,fig.width=10,fig.height=5,echo=FALSE}
-ggpubr::ggarrange(Demog("Urban_M",xlab = "Year",ylab = "Population(Million)",title = "Urban Male  Population",Total_Pop_C,Total_Pop_R),
-                  Demog("Urban_F",xlab = "Year",ylab = "Population(Million)",title = "Urban Female Population", Total_Pop_C,Total_Pop_R),
-                  ncol = 2,nrow = 1)
-```
-
-```{r,fig.width=10,fig.height=10,echo=FALSE}
-Demog("Rural_T",xlab = "Year",ylab = "Population(Million)",title = "Rural Population",Total_Pop_C,Total_Pop_R)
+```{r,echo=FALSE,fig.height=25,fig.width=10,message=FALSE}
+P1 <- Demog("Total_population",xlab = "Year",ylab = "Population(Million)",title = "Total Population",Total_Pop_C,Total_Pop_R)
+P2 <- Demog("Male_T",xlab = "Year",ylab = "Population(Million)",title = "Male Population",Total_Pop_C,Total_Pop_R)
+P3 <- Demog("Female_T",xlab = "Year",ylab = "Population(Million)",title = "Female Population",Total_Pop_C,Total_Pop_R)
+P4 <- Demog("Urban_T",xlab = "Year",ylab = "Population(Million)",title = "Urban  Population",Total_Pop_C,Total_Pop_R)
+P5 <- Demog("Urban_M",xlab = "Year",ylab = "Population(Million)",title = "Urban Male  Population",Total_Pop_C,Total_Pop_R)
+P6 <- Demog("Urban_F",xlab = "Year",ylab = "Population(Million)",title = "Urban Female Population", Total_Pop_C,Total_Pop_R)
+P7 <- Demog("Rural_T",xlab = "Year",ylab = "Population(Million)",title = "Rural Population",Total_Pop_C,Total_Pop_R)
+P8<- Demog("Rural_M",xlab = "Year",ylab = "Population(Million)",title = "Rural Male Population",Total_Pop_C,Total_Pop_R)
+P9 <- Demog("Rural_F",xlab = "Year",ylab = "Population(Million)",title = "Rural Female Population",Total_Pop_C,Total_Pop_R)
+ggpubr::ggarrange(P1,P2,P3,P4,P5,P6,P7,P8,P9,ncol = 2,nrow = 5)
 
 ```
 
-```{r,fig.height=5,fig.width=10,echo=FALSE}
-ggpubr::ggarrange(Demog("Rural_M",xlab = "Year",ylab = "Population(Million)",title = "Rural Male Population",Total_Pop_C,Total_Pop_R),
-                  Demog("Rural_F",xlab = "Year",ylab = "Population(Million)",title = "Rural Female Population",Total_Pop_C,Total_Pop_R),
-                  ncol = 2,nrow = 1)
-```
 
 ## Exporting DTA
 

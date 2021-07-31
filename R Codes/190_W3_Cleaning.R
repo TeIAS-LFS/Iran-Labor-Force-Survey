@@ -5,6 +5,7 @@ Intercensal <- read_xlsx(paste0(Files_paths,"/","Cencus75_95.xlsx"),sheet = "Int
 
 
 for (year in First_year:Last_year) {
+  year <- 97
   index <- match(W3_colnames$Year_Season[str_detect(W3_colnames$Year_Season,paste0("^",year))],W3_colnames$Year_Season)
   W3 <- tibble()
   for (j in index) {
@@ -34,6 +35,7 @@ for (year in First_year:Last_year) {
     FORM2JOZ <- FORM2JOZ%>%
       dplyr::rename("AGE" = "Age",
                     "GENDER" = "Gender")%>%
+      mutate(GENDER = ifelse(GENDER =="Male","1","2"))%>%
       select(Pkey,GENDER,AGE)
     
     W3 <- W3%>%
@@ -75,24 +77,7 @@ for (year in First_year:Last_year) {
     dplyr::mutate(CSP = 0.25*sum(IW_Seasonly,na.rm = T))%>%
     ungroup()%>%
     mutate(R_Sub_Pop = NA)
-
     
-    W3$C_Sub_Pop <- NULL
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE <=9],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE <=9],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE <=9],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE <=9] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE <=9],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == '2' & W3$Rural == "1" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & (W3$AGE >= 10 & W3$AGE <= 64)],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE >=65],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "1" & W3$AGE >=65],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "1" & W3$Rural == "2" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "1" & W3$Rural == '2' & W3$AGE >=65],na.rm = true)
-    W3$C_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65] <- 0.25*sum(W3$IW_Seasonly[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65],na.rm = true)
-    
-
-  
     if (year>=85 & year <=95) {
       W3$R_Sub_Pop <- NULL
       W3$R_Sub_Pop[W3$GENDER == "1" & W3$Rural == "1" & W3$AGE <=9] <- Intercensal$Male_0_9_U[Intercensal$Year == year]
@@ -109,15 +94,18 @@ for (year in First_year:Last_year) {
       W3$R_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65] <- Intercensal$Female_65_R[Intercensal$Year== year]   
       
     }
-    
+    County_ID <- readRDS(paste0(Files_paths,"/County_ID.RDS"))
+
+
     W3<- W3 %>%
-      mutate(Adj_Coef = R_Sub_Pop/C_Sub_Pop)%>%
+      left_join(County_ID,key = "Pkey")%>%
+      mutate(Adj_Coef = R_Sub_Pop/CSP)%>%
       mutate(Adj_IW_Seasonly = ifelse(!is.na(Adj_Coef),Adj_Coef*IW_Seasonly,Adj_IW_Seasonly))
 
 
     
     W3_A<- W3%>%
-      select(Pkey,Year,Season,HHID,IID,Province_ID, Rural,IW_Seasonly,Adj_IW_Seasonly)
+      select(Pkey,Year,Season,HHID,IID,Province_ID,Shahrestan, Rural,IW_Seasonly,Adj_IW_Seasonly)
     
     W3_EX <- W3%>%
       select(-colnames(W3_A),Pkey)%>%
