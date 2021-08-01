@@ -223,18 +223,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="descriptive-evidence" class="section level1" number="6">
 <h1><span class="header-section-number">Chapter 6</span> Descriptive Evidence</h1>
 <p><img src="Figures/Employment%20Status.png" /></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="descriptive-evidence.html#cb1-1" aria-hidden="true" tabindex="-1"></a>LFS_Indicators_Y <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes/Consistency/LFS_Indicators_Y.RDS&quot;</span>)</span>
+<span id="cb1-2"><a href="descriptive-evidence.html#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="descriptive-evidence.html#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="descriptive-evidence.html#cb1-4" aria-hidden="true" tabindex="-1"></a>LFSINP  <span class="ot">&lt;-</span> <span class="cf">function</span>(Var, <span class="at">xlab =</span> <span class="st">&quot;&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>, <span class="at">Main =</span> <span class="st">&quot;&quot;</span>) {</span>
+<span id="cb1-5"><a href="descriptive-evidence.html#cb1-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-6"><a href="descriptive-evidence.html#cb1-6" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> LFS_Indicators_Y,<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Year,<span class="at">y=</span><span class="fu">eval</span>(<span class="fu">parse</span>(<span class="at">text =</span>Var ))<span class="sc">/</span><span class="dv">1000000</span>))<span class="sc">+</span></span>
+<span id="cb1-7"><a href="descriptive-evidence.html#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;Red&quot;</span>,<span class="at">shape =</span> <span class="dv">17</span>)<span class="sc">+</span></span>
+<span id="cb1-8"><a href="descriptive-evidence.html#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb1-9"><a href="descriptive-evidence.html#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> Main,<span class="at">x=</span>xlab,<span class="at">y=</span>ylab)</span>
+<span id="cb1-10"><a href="descriptive-evidence.html#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
+<span id="cb1-11"><a href="descriptive-evidence.html#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <div id="employment" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Employment</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="descriptive-evidence.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (year <span class="cf">in</span> N) {</span>
-<span id="cb1-2"><a href="descriptive-evidence.html#cb1-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-3"><a href="descriptive-evidence.html#cb1-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-4"><a href="descriptive-evidence.html#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-3-1.png" width="960" /></p>
 </div>
 <div id="unemployment" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> Unemployment</h2>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-4-1.png" width="960" /></p>
 </div>
 <div id="participation" class="section level2" number="6.3">
 <h2><span class="header-section-number">6.3</span> Participation</h2>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-5-1.png" width="960" /></p>
 
 </div>
 </div>

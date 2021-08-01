@@ -94,11 +94,12 @@ for (year in First_year:Last_year) {
       W3$R_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65] <- Intercensal$Female_65_R[Intercensal$Year== year]   
       
     }
+  
     County_ID <- readRDS(paste0(Files_paths,"/County_ID.RDS"))
 
 
     W3<- W3 %>%
-      left_join(County_ID,key = "Pkey")%>%
+      left_join(County_ID,key = "HHID")%>%
       mutate(Adj_Coef = R_Sub_Pop/CSP)%>%
       mutate(Adj_IW_Seasonly = ifelse(!is.na(Adj_Coef),Adj_Coef*IW_Seasonly,Adj_IW_Seasonly))
 
