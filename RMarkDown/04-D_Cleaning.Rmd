@@ -330,8 +330,8 @@ NR labels are created according to the following flowcharts. For example, questi
 
 
 
-![NR Diagram For Year After 1387](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/NR Diagram_Befor_87.png)
-![NR Diagram For Year Before 1387](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/NR Diagram_After_87.png)
+![NR Diagram For Year After 1387](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/NR Diagram_Befor_87.svg)
+![NR Diagram For Year Before 1387](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/NR Diagram_After_87.svg)
 
 For Creating NR labels, we should translate the above flowchart to R codes. For doing so, we run following code. 
 
@@ -739,7 +739,7 @@ D %>%
 
 #### **Creating NR**
 
-![](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/NR_F2_Diagram.png)
+![](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/NR_F2_Diagram.svg)
 
 ** FORM2JOZ NAs Before Creating NR
 

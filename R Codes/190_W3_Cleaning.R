@@ -2,10 +2,9 @@
 W3_colnames <- read_xlsx(Col_name_path,sheet = "W3")
 W3_RDS_Path <- RDS_path[str_detect(RDS_path,"W3.RDS|9802|9803|9804")]
 Intercensal <- read_xlsx(paste0(Files_paths,"/","Cencus75_95.xlsx"),sheet = "Intercensal_pop")
-
+County_ID <- readRDS(paste0(Files_paths,"/County_ID.RDS"))
 
 for (year in First_year:Last_year) {
-  year <- 97
   index <- match(W3_colnames$Year_Season[str_detect(W3_colnames$Year_Season,paste0("^",year))],W3_colnames$Year_Season)
   W3 <- tibble()
   for (j in index) {
@@ -94,12 +93,9 @@ for (year in First_year:Last_year) {
       W3$R_Sub_Pop[W3$GENDER == "2" & W3$Rural == "2" & W3$AGE >=65] <- Intercensal$Female_65_R[Intercensal$Year== year]   
       
     }
-  
-    County_ID <- readRDS(paste0(Files_paths,"/County_ID.RDS"))
-
 
     W3<- W3 %>%
-      left_join(County_ID,key = "HHID")%>%
+      left_join(County_ID,by = "HHID")%>%
       mutate(Adj_Coef = R_Sub_Pop/CSP)%>%
       mutate(Adj_IW_Seasonly = ifelse(!is.na(Adj_Coef),Adj_Coef*IW_Seasonly,Adj_IW_Seasonly))
 
