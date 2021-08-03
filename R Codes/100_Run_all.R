@@ -1,5 +1,5 @@
 rm(list=ls())
-
+# Test git commit from R
 # Before Running Code specify the directories in  which your code,
 #             your files and your data stored.
 
