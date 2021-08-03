@@ -14,4 +14,12 @@ description: "This is a minimal example of using the bookdown package to write a
 
 # Preface
 
+![](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/fig2.png)
 
+The purpose of this document is to review the Iranian labor force survey plan. For this purpose, first the goals and generalities of this plan are explained, and then the data cleaning process is explained in detail, and finally facts about the Iranian labor force are explained
+
+This document is made by R bookdown. you can find this template and a lot of useful information about git book package in [bookdown: Authoring Books and Technical Documents with R Markdown](https://bookdown.org/yihui/bookdown/)
+
+The first part of this article is written according to the reports of the Statistics Center. To better understand the labor force survey plan, it is strongly recommended that you review these reports. These reports can be found at this [link](https://www.amar.org.ir/%D8%AF%D8%A7%D8%AF%D9%87%D9%87%D8%A7-%D9%88-%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA-%D8%A2%D9%85%D8%A7%D8%B1%DB%8C/%D8%AC%D9%85%D8%B9%DB%8C%D8%AA-%D9%88-%D9%86%DB%8C%D8%B1%D9%88%DB%8C-%DA%A9%D8%A7%D8%B1/%D9%86%DB%8C%D8%B1%D9%88%DB%8C-%DA%A9%D8%A7%D8%B1#5585732-).
+
+This project has been implemented in Git and the interested user can get all the relevant codes and files in [Iran-Labor-Force-Survey](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey)
