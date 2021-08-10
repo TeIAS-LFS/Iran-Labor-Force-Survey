@@ -15,7 +15,7 @@ library(plotrix)
 ```
 
 
-![](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/Employment Status.svg)
+![](G:/Github/LFS/Iran-Labor-Force-Survey/docs/Figures/Employment Status.svg)
 
 ```{r}
 LFS_Indicators_Y <- readRDS("C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes/Consistency/LFS_Indicators_Y.RDS")
