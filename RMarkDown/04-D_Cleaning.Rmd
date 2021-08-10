@@ -1409,9 +1409,9 @@ ggpubr::ggarrange(P1,P2,P3,P4,P5,P6,P7,P8,P9,ncol = 2,nrow = 5)
 
 ## Exporting DTA
 
-for exporting datasets to .data format we use `r export()` function from `r rio` package
+for exporting datasets to .data format we use _export()_ function from _rio_ package
 
-```{r,eval=FALSE}
+```{r,eval = FALSE}
 library("rio")
 
 
@@ -1440,6 +1440,7 @@ for (i in 1:length(RDS_Pro_P)) {
   A <- readRDS(RDS_Pro_P[i])
   export(A,DTA_Pro_P[i])
 }
+
 ```
 
 
