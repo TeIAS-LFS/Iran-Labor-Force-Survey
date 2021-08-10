@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 # Descriptive Evidence
 
 
@@ -5,6 +10,7 @@
 library(tidyverse)
 library(ggplot2)
 library(readxl)
+library(plotrix)
 
 ```
 
@@ -14,33 +20,67 @@ library(readxl)
 ```{r}
 LFS_Indicators_Y <- readRDS("C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes/Consistency/LFS_Indicators_Y.RDS")
 
+LFS_Indicators_Y <- LFS_Indicators_Y%>%
+  mutate(EMPR_T = Total_Employment/Total_Participation,
+         EMPR_M = Male_Employment/Male_Participation,
+         EMPR_F = Female_Employment/Female_Participation,
+         EMPR_U = Urban_Employment/Total_Participation,
+         EMPR_R = Rural_Employment/Rural_Participation,
+         UMPR_T = Total_Unemployment / Total_Participation,
+         UMPR_M = Male_Unemployment/Male_Participation,
+         UMPR_F = Female_Unemployment/Female_Participation,
+         UMPR_U = Urban_Unemployment/Urban_Participation,
+         UMPR_R = Rural_Unemployment/Rural_Participation)%>%
+  mutate_at(vars(Male_Employment:Urban_Participation),`/`,1000000)%>%
+  mutate_at(vars(EMPR_T:UMPR_R),`*`,100)
 
-LFSINP  <- function(Var, xlab = "", ylab = "", Main = "") {
-  
-p <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year,y=eval(parse(text =Var ))/1000000))+
-  geom_point(color = "Red",shape = 17)+
-  geom_line()+
-  labs(title = Main,x=xlab,y=ylab)
-  return(p)
+LFSINP <- function(df,x = "",y1 = "", y2 = "", Main = "",y1l = "" ,y2l = "",y1lim =NULL ){
+  P <- twoord.plot(lx = x, ly =y1 , rx = x , ry =y2, data = df,lylim = y1lim,
+                   main = Main , ylab =y1l, rylab = y2l , lpch = 10,rpch = 10,
+                   lcol = "black" ,rcol = "red",xlab = "Year",
+                   do.first="plot_bg();grid(col=\"white\",lty=15)")
+  return(P)
 }
+
+#LFSINP  <- function(Var, xlab = "", ylab = "", Main = "") {
+  
+#p <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year,y=eval(parse(text =Var #))/1000000))+
+#  geom_point(color = "Red",shape = 17)+
+#  geom_line()+
+#  labs(title = Main,x=xlab,y=ylab)
+#  return(p)
+#}
 ```
 
 ## Employment
 
-```{r,echo=FALSE,fig.width=10,fig.height=15}
-P1 <- LFSINP("Total_Employment",xlab = "Year",ylab = "Employed Population",Main = "Total Employment")
-P2 <- LFSINP("Male_Employment",xlab = "Year",ylab = "Employed Population",Main = "Male Employment")
-P3 <- LFSINP("Female_Employment",xlab = "Year",ylab = "Employed Population",Main = "Female Employment")
-P4 <- LFSINP("Urban_Employment",xlab = "Year",ylab = "Employed Population",Main = "Urban Employment")
-P5 <- LFSINP("Rural_Employment",xlab = "Year",ylab = "Employed Population",Main = "Rural Employment")
+```{r,echo=FALSE,fig.width=10,fig.height=15,message=FALSE}
+layout(matrix(c(1,2,3,4,5),nrow = 3 ,ncol = 2 ,byrow = T))
+LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Total_Employment",y2="EMPR_T" ,Main = "Total Employment",y1l = "Employed Pop (Million)",y2l = "Employment rate (%)",y1lim = c(20.5,24.5))
 
-ggpubr::ggarrange(P1,P2,P3,P4,P5,ncol = 2,nrow = 3)
+LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Male_Employment",y2="EMPR_M" ,Main = "Total Employment",y1l = "Employed Pop (Million)",y2l = "Employment rate (%)",y1lim = c(16.5,20))
+
+LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Female_Employment",y2="EMPR_F" ,Main = "Total Employment",y1l = "Employed Pop (Million)",y2l = "Employment rate (%)",y1lim = c(3,4.5))
+
+LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Urban_Employment",y2="EMPR_U" ,Main = "Total Employment",y1l = "Employed Pop (Million)",y2l = "Employment rate (%)",y1lim = c(13.2,17.9))
+
+LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Rural_Employment",y2="EMPR_R" ,Main = "Total Employment",y1l = "Employed Pop (Million)",y2l = "Employment rate (%)",y1lim = c(6.1,7.4))
+
+
+
+#P1 <- LFSINP("Total_Employment",xlab = "Year",ylab = "Employed #Population",Main = "Total Employment")
+#P2 <- LFSINP("Male_Employment",xlab = "Year",ylab = "Employed #Population",Main = "Male Employment")
+#P3 <- LFSINP("Female_Employment",xlab = "Year",ylab = "Employed #Population",Main = "Female Employment")
+#P4 <- LFSINP("Urban_Employment",xlab = "Year",ylab = "Employed #Population",Main = "Urban Employment")
+#P5 <- LFSINP("Rural_Employment",xlab = "Year",ylab = "Employed #Population",Main = "Rural Employment")
+
+#ggpubr::ggarrange(P1,P2,P3,P4,P5,ncol = 2,nrow = 3)
 
 ```
 
 ## Unemployment
 
-```{r,echo=FALSE,fig.width=10,fig.height=15}
+```{r,echo=FALSE,fig.width=10,fig.height=15,eval=FALSE}
 P1 <- LFSINP("Total_Unemployment",xlab = "Year",ylab = "Unemployed Population",Main = "Total Unemployment")
 P2 <- LFSINP("Male_Unemployment",xlab = "Year",ylab = "Unemployed Population",Main = "Male Unemployment")
 P3 <- LFSINP("Female_Unemployment",xlab = "Year",ylab = "Unemployed Population",Main = "Female Unemployment")
@@ -52,7 +92,7 @@ ggpubr::ggarrange(P1,P2,P3,P4,P5,ncol = 2,nrow = 3)
 
 ## Participation
 
-```{r,echo=FALSE,fig.width=10,fig.height=15}
+```{r,echo=FALSE,fig.width=10,fig.height=15,eval=FALSE}
 P1 <- LFSINP("Total_Participation",xlab = "Year",ylab = "Participated Population",Main = "Total Participation")
 P2 <- LFSINP("Male_Participation",xlab = "Year",ylab = "Participated Population",Main = "Male Participation")
 P3 <- LFSINP("Female_Participation",xlab = "Year",ylab = "Participated Population",Main = "Female Participation")
