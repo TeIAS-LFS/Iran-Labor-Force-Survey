@@ -79,6 +79,20 @@ LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Rural_Employment",y2="EMPR_R" ,Main = "
 ```
 
 ## Unemployment
+```{r,echo=FALSE,fig.width=10,fig.height=15,message=FALSE}
+layout(matrix(c(1,2,3,4,5,6),nrow = 3,ncol = 2,byrow = TRUE))
+
+LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Total_Unemployment",y2="UMPR_T" ,Main = "Total Unemployment",y1l = "Unemployed Pop (Million)",y2l = "Unemployment rate (%)",y1lim = c(2.3,3.3))
+
+LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Male_Unemployment",y2="UMPR_M" ,Main = "Male Unemployment",y1l = "Unemployed Pop (Million)",y2l = "Unemployment rate (%)",y1lim = c(1.5,2.3))
+
+LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Female_Unemployment",y2="UMPR_F" ,Main = "Female Employment",y1l = "Unemployed Pop (Million)",y2l = "Unemployment rate (%)",y1lim = c(0.6,1.1))
+
+LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Urban_Unemployment",y2="UMPR_U" ,Main = "Urban Unemployment",y1l = "Unemployed Pop (Million)",y2l = "Unemployment rate (%)",y1lim = c(1.75,2.75))
+
+LFSINP(LFS_Indicators_Y,x = "Year",y1 = "Rural_Unemployment",y2="UMPR_R" ,Main = "Rural Unemployment",y1l = "Unemployed Pop (Million)",y2l = "Unemployment rate (%)",y1lim = c(0.45,0.62))
+
+```
 
 ```{r,echo=FALSE,fig.width=10,fig.height=15,eval=FALSE}
 P1 <- LFSINP("Total_Unemployment",xlab = "Year",ylab = "Unemployed Population",Main = "Total Unemployment")
