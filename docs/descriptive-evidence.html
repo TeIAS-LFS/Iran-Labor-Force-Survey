@@ -240,39 +240,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-15"><a href="descriptive-evidence.html#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(EMPR_T<span class="sc">:</span>UMPR_R),<span class="st">`</span><span class="at">*</span><span class="st">`</span>,<span class="dv">100</span>)</span>
 <span id="cb1-16"><a href="descriptive-evidence.html#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-17"><a href="descriptive-evidence.html#cb1-17" aria-hidden="true" tabindex="-1"></a>LFSINP <span class="ot">&lt;-</span> <span class="cf">function</span>(df,<span class="at">x =</span> <span class="st">&quot;&quot;</span>,<span class="at">y1 =</span> <span class="st">&quot;&quot;</span>, <span class="at">y2 =</span> <span class="st">&quot;&quot;</span>, <span class="at">Main =</span> <span class="st">&quot;&quot;</span>,<span class="at">y1l =</span> <span class="st">&quot;&quot;</span> ,<span class="at">y2l =</span> <span class="st">&quot;&quot;</span>,<span class="at">y1lim =</span><span class="cn">NULL</span> ){</span>
-<span id="cb1-18"><a href="descriptive-evidence.html#cb1-18" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">&lt;-</span> <span class="fu">twoord.plot</span>(<span class="at">lx =</span> x, <span class="at">ly =</span>y1 , <span class="at">rx =</span> x , <span class="at">ry =</span>y2, <span class="at">data =</span> df,<span class="at">lylim =</span> y1lim,</span>
+<span id="cb1-18"><a href="descriptive-evidence.html#cb1-18" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">&lt;-</span> <span class="fu">twoord.plot</span>(<span class="at">lx =</span> x, <span class="at">ly =</span>y1 , <span class="at">rx =</span> x , <span class="at">ry =</span>y2, <span class="at">data =</span> df,<span class="at">lylim =</span> y1lim,<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">4</span>),</span>
 <span id="cb1-19"><a href="descriptive-evidence.html#cb1-19" aria-hidden="true" tabindex="-1"></a>                   <span class="at">main =</span> Main , <span class="at">ylab =</span>y1l, <span class="at">rylab =</span> y2l , <span class="at">lpch =</span> <span class="dv">10</span>,<span class="at">rpch =</span> <span class="dv">10</span>,</span>
 <span id="cb1-20"><a href="descriptive-evidence.html#cb1-20" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lcol =</span> <span class="st">&quot;black&quot;</span> ,<span class="at">rcol =</span> <span class="st">&quot;red&quot;</span>,<span class="at">xlab =</span> <span class="st">&quot;Year&quot;</span>,</span>
 <span id="cb1-21"><a href="descriptive-evidence.html#cb1-21" aria-hidden="true" tabindex="-1"></a>                   <span class="at">do.first=</span><span class="st">&quot;plot_bg();grid(col=</span><span class="sc">\&quot;</span><span class="st">white</span><span class="sc">\&quot;</span><span class="st">,lty=15)&quot;</span>)</span>
-<span id="cb1-22"><a href="descriptive-evidence.html#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(P)</span>
-<span id="cb1-23"><a href="descriptive-evidence.html#cb1-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-24"><a href="descriptive-evidence.html#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="descriptive-evidence.html#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#LFSINP  &lt;- function(Var, xlab = &quot;&quot;, ylab = &quot;&quot;, Main = &quot;&quot;) {</span></span>
-<span id="cb1-26"><a href="descriptive-evidence.html#cb1-26" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-27"><a href="descriptive-evidence.html#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#p &lt;- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year,y=eval(parse(text =Var #))/1000000))+</span></span>
-<span id="cb1-28"><a href="descriptive-evidence.html#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#  geom_point(color = &quot;Red&quot;,shape = 17)+</span></span>
-<span id="cb1-29"><a href="descriptive-evidence.html#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#  geom_line()+</span></span>
-<span id="cb1-30"><a href="descriptive-evidence.html#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#  labs(title = Main,x=xlab,y=ylab)</span></span>
-<span id="cb1-31"><a href="descriptive-evidence.html#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#  return(p)</span></span>
-<span id="cb1-32"><a href="descriptive-evidence.html#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">#}</span></span></code></pre></div>
+<span id="cb1-22"><a href="descriptive-evidence.html#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-23"><a href="descriptive-evidence.html#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="descriptive-evidence.html#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#LFSINP  &lt;- function(Var, xlab = &quot;&quot;, ylab = &quot;&quot;, Main = &quot;&quot;) {</span></span>
+<span id="cb1-25"><a href="descriptive-evidence.html#cb1-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-26"><a href="descriptive-evidence.html#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#p &lt;- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year,y=eval(parse(text =Var #))/1000000))+</span></span>
+<span id="cb1-27"><a href="descriptive-evidence.html#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#  geom_point(color = &quot;Red&quot;,shape = 17)+</span></span>
+<span id="cb1-28"><a href="descriptive-evidence.html#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#  geom_line()+</span></span>
+<span id="cb1-29"><a href="descriptive-evidence.html#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#  labs(title = Main,x=xlab,y=ylab)</span></span>
+<span id="cb1-30"><a href="descriptive-evidence.html#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#  return(p)</span></span>
+<span id="cb1-31"><a href="descriptive-evidence.html#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#}</span></span></code></pre></div>
 <div id="employment" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Employment</h2>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-3-1.png" width="960" /><img src="bookdown-demo_files/figure-html/unnamed-chunk-3-2.png" width="960" /><img src="bookdown-demo_files/figure-html/unnamed-chunk-3-3.png" width="960" /><img src="bookdown-demo_files/figure-html/unnamed-chunk-3-4.png" width="960" /><img src="bookdown-demo_files/figure-html/unnamed-chunk-3-5.png" width="960" /></p>
-<pre><code>## Warning in as_grob.default(plot): Cannot convert object of class list into a
-## grob.
-
-## Warning in as_grob.default(plot): Cannot convert object of class list into a
-## grob.
-
-## Warning in as_grob.default(plot): Cannot convert object of class list into a
-## grob.
-
-## Warning in as_grob.default(plot): Cannot convert object of class list into a
-## grob.
-
-## Warning in as_grob.default(plot): Cannot convert object of class list into a
-## grob.</code></pre>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-3-6.png" width="960" /></p>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-3-1.png" width="960" /></p>
 </div>
 <div id="unemployment" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> Unemployment</h2>
