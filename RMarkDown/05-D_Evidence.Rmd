@@ -93,8 +93,6 @@ LFSINP2(LFS_Indicators_Y,x = "Year",y1 = "Urban_Unemployment",y2="UMPR_U" ,Main 
 
 LFSINP2(LFS_Indicators_Y,x = "Year",y1 = "Rural_Unemployment",y2="UMPR_R" ,Main = "Rural Unemployment",y1l = "Unemployed Pop (Million)",y2l = "Unemployment rate (%)",y1lim = c(0.45,0.66))
 
-
-
 ```
 
 ```{r,echo=FALSE,fig.width=10,fig.height=15,eval=FALSE}
