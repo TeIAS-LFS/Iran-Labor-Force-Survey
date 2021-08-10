@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 5 Data Cleaning | Iran Labor Force Survey</title>
+  <title> 5 Data Cleaning | Iran Labor Force Survey</title>
   <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
   <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 5 Data Cleaning | Iran Labor Force Survey" />
+  <meta property="og:title" content=" 5 Data Cleaning | Iran Labor Force Survey" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 5 Data Cleaning | Iran Labor Force Survey" />
+  <meta name="twitter:title" content=" 5 Data Cleaning | Iran Labor Force Survey" />
   
   <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
   
@@ -225,7 +225,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="data-cleaning" class="section level1" number="5">
-<h1><span class="header-section-number">Chapter 5</span> Data Cleaning</h1>
+<h1><span class="header-section-number"> 5</span> Data Cleaning</h1>
 <p>In this section, we explain the cleaning steps needed for LFS data. We divide the entire code in around 10 scripts (Find the codes in this <a href="https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/tree/master/R%20Codes">link</a>) and will explain each of them in turn. If you just want to clean the data without knowing the details of cleaning, you can just copy the raw data, files and codes in separate folders in your computer and the edit the 4 first lines in the first script (100_Run_all) and run it. After a while, you can find cleaned data in R and Stata formats in your computer and use <a href="https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/blob/master/Files/Meta_Data.xlsx"><em>Meta Data</em></a>! file to understand the cleaned data. However, we suggest you to do the cleaning step by step and know what is happening.</p>
 <div id="run-all" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Run All</h2>
@@ -1136,8 +1136,8 @@ Marriage_Status
 <p>NR stands for “Not Related,” and we defined this value for all variables to get a true picture of the Missing data.</p>
 <p>In fact, if we examine the raw data, we see many missing observations, which may confuse us at first glance, but this is not the case. Most of these missings are because the question corresponding to these variables is not asked from some individuals in Sample.</p>
 <p>NR labels are created according to the following flowcharts. For example, questions 2-7 are not related to individuals who answer yes to question 1.</p>
-<p><img src="Figures/NR%20Diagram_Befor_87.svg" alt="NR Diagram For Year After 1387" />
-<img src="Figures/NR%20Diagram_After_87.svg" alt="NR Diagram For Year Before 1387" /></p>
+<p><img src="G:/Github/LFS/Iran-Labor-Force-Survey/docs/Figures/NR%20Diagram_Befor_87.svg" alt="NR Diagram For Year After 1387" />
+<img src="G:/Github/LFS/Iran-Labor-Force-Survey/docs/Figures/NR%20Diagram_After_87.svg" alt="NR Diagram For Year Before 1387" /></p>
 <p>For Creating NR labels, we should translate the above flowchart to R codes. For doing so, we run following code.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="data-cleaning.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (year <span class="cf">in</span> N) {</span>
 <span id="cb13-2"><a href="data-cleaning.html#cb13-2" aria-hidden="true" tabindex="-1"></a>  FORM3 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(Processd_data_Path,<span class="st">&quot;/&quot;</span>,year,<span class="st">&quot;/FORM3.RDS&quot;</span>))</span>
@@ -9809,7 +9809,7 @@ Literacy
 </div>
 <div id="creating-nr-1" class="section level4" number="5.8.2.3">
 <h4><span class="header-section-number">5.8.2.3</span> <strong>Creating NR</strong></h4>
-<p><img src="Figures/NR_F2_Diagram.svg" /></p>
+<p><img src="G:/Github/LFS/Iran-Labor-Force-Survey/docs/Figures/NR_F2_Diagram.svg" /></p>
 <p>** FORM2JOZ NAs Before Creating NR</p>
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
 <table class="table" style="margin-left: auto; margin-right: auto;">
@@ -12000,6 +12000,35 @@ Marriage_Status
 </div>
 <div id="exporting-dta" class="section level2" number="5.12">
 <h2><span class="header-section-number">5.12</span> Exporting DTA</h2>
+<p>for exporting datasets to .data format we use <em>export()</em> function from <em>rio</em> package</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="data-cleaning.html#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;rio&quot;</span>)</span>
+<span id="cb34-2"><a href="data-cleaning.html#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="data-cleaning.html#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="data-cleaning.html#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(Processd_data_Path_dta)) {</span>
+<span id="cb34-5"><a href="data-cleaning.html#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (year <span class="cf">in</span> N) {</span>
+<span id="cb34-6"><a href="data-cleaning.html#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">file.exists</span>(<span class="fu">paste0</span>(Processd_data_Path_dta,<span class="st">&quot;/&quot;</span>,year))){</span>
+<span id="cb34-7"><a href="data-cleaning.html#cb34-7" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NULL</span></span>
+<span id="cb34-8"><a href="data-cleaning.html#cb34-8" aria-hidden="true" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
+<span id="cb34-9"><a href="data-cleaning.html#cb34-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">dir.create</span>(<span class="fu">paste0</span>(Processd_data_Path_dta,<span class="st">&quot;/&quot;</span>,year))</span>
+<span id="cb34-10"><a href="data-cleaning.html#cb34-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb34-11"><a href="data-cleaning.html#cb34-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb34-12"><a href="data-cleaning.html#cb34-12" aria-hidden="true" tabindex="-1"></a>}<span class="cf">else</span>{</span>
+<span id="cb34-13"><a href="data-cleaning.html#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(Processd_data_Path_dta)</span>
+<span id="cb34-14"><a href="data-cleaning.html#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (year <span class="cf">in</span> N) {</span>
+<span id="cb34-15"><a href="data-cleaning.html#cb34-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dir.create</span>(<span class="fu">paste0</span>(Processd_data_Path_dta,<span class="st">&quot;/&quot;</span>,year))</span>
+<span id="cb34-16"><a href="data-cleaning.html#cb34-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb34-17"><a href="data-cleaning.html#cb34-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb34-18"><a href="data-cleaning.html#cb34-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-19"><a href="data-cleaning.html#cb34-19" aria-hidden="true" tabindex="-1"></a>RDS_Pro_P <span class="ot">&lt;-</span> <span class="fu">list.files</span>(Processd_data_Path,<span class="at">pattern =</span> <span class="st">&quot;.RDS&quot;</span>,</span>
+<span id="cb34-20"><a href="data-cleaning.html#cb34-20" aria-hidden="true" tabindex="-1"></a>                <span class="at">full.names =</span> <span class="cn">TRUE</span>,<span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb34-21"><a href="data-cleaning.html#cb34-21" aria-hidden="true" tabindex="-1"></a>DTA_Pro_P <span class="ot">&lt;-</span> <span class="fu">str_replace</span>(RDS_Pro_P,Processd_data,Processd_data_dta)</span>
+<span id="cb34-22"><a href="data-cleaning.html#cb34-22" aria-hidden="true" tabindex="-1"></a>DTA_Pro_P <span class="ot">&lt;-</span> <span class="fu">str_replace</span>(DTA_Pro_P,<span class="st">&quot;.RDS&quot;</span>,<span class="st">&quot;.dta&quot;</span>)</span>
+<span id="cb34-23"><a href="data-cleaning.html#cb34-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-24"><a href="data-cleaning.html#cb34-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-25"><a href="data-cleaning.html#cb34-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(RDS_Pro_P)) {</span>
+<span id="cb34-26"><a href="data-cleaning.html#cb34-26" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(RDS_Pro_P[i])</span>
+<span id="cb34-27"><a href="data-cleaning.html#cb34-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">export</span>(A,DTA_Pro_P[i])</span>
+<span id="cb34-28"><a href="data-cleaning.html#cb34-28" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="correcting-inconsistencies" class="section level2" number="5.13">
 <h2><span class="header-section-number">5.13</span> Correcting Inconsistencies</h2>
