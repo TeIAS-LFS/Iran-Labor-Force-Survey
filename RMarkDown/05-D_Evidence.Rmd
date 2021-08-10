@@ -43,7 +43,7 @@ LFSINP2 <- function(df,x = "",y1 = "", y2 = "", Main = "",y1l = "" ,y2l = "",y1l
 
 LFSINP1  <- function(Var, xlab = "", ylab = "", Main = "") {
   
-p <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year,y=eval(parse(text =Var ))/1000000))+
+p <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year,y=eval(parse(text =Var ))))+
   geom_point(color = "Red",shape = 17)+
   geom_line()+
   labs(title = Main,x=xlab,y=ylab)
