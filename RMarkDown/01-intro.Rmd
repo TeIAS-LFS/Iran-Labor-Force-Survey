@@ -1,6 +1,6 @@
 # Introduction {#intro}
 
-The Labor Force Survey (LFS) started in the spring of 2005 (1384 in Persian calendar) with the aim of achieving seasonal and annual labor force indicators and their changes in the country and the province levels. Prior to that, the statistical needs of the country's human resource sector were met by demographic statistical projects of the Statistical Center of Iran and sampling projects of the Ministry of Labor and Social Affairs, the most important of which are:
+The Labor Force Survey (LFS) started in the spring of 2005 (1384 in Persian calendar) to achieve seasonal and annual labor force indicators and their changes in the country and the province levels. Prior to that, the statistical needs of the country's human resource sector were met by demographic statistical projects of the Statistical Center of Iran and sampling projects of the Ministry of Labor and Social Affairs, the most important of which are:
 
 *   Sample population census, Statistical Center of Iran, 1968 : 
 *   Human Resource Census, Ministry of labor and social affairs, 1969-1972
@@ -15,7 +15,7 @@ The labor force Survey data has been designed and implemented using the recommen
 
 In this document, we explain the cleaning steps needed prior to use of the LFS data. But before that, it is necessary to have a brief overview of the general information on the labor force survey. Detailed information is available in reports of Statistical Center of Iran (Link). 
 
-The rest of this document is organized as follows. In section 2, we take a look at the design of survey and definitions used in it. In section 3, we briefly review the two survey questionnaires. Section four explains the cleaning procedure step by step, and finally, in section 5, we provide some descriptive statistics and plots of main labor market indicators in Iran.
+The rest of this document is organized as follows. In section 2, we take a look at the design of survey and definitions used in it. In section 3, we briefly review the two survey questionnaires. Section 4 explains the cleaning procedure step by step, and finally, in section 5, we provide some descriptive statistics and plots of main labor market indicators in Iran.
  
-You can find R codes [Here](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/tree/master/R%20Codes) and Files like _Meta Data_, _LFS_colnames_, etc [Here](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/tree/master/Files)
+You can find R codes [Here](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/tree/master/R%20Codes) and necessary files for cleaning like _Meta Data_, _LFS_colnames_, etc [Here](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/tree/master/Files)
 
