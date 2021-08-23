@@ -43,17 +43,19 @@ LFSINP2 <- function(df,x = "",y1 = "", y2 = "", Main = "",y1l = "" ,y2l = "",y1l
                    do.first="plot_bg()")
 }
 
-LFSINP1  <- function(Var, xlab = "", ylab = "", Main = "") {
+LFSINP1  <- function(Var, xlab = "", ylab = "", Main = "",cap = "") {
   
 p <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year,y=eval(parse(text =Var ))))+
   geom_point(color = "Red",shape = 17)+
   geom_line()+
-  labs(title = Main,x=xlab,y=ylab)+
+  labs(title = Main,x=xlab,y=ylab,caption = cap)+
   theme(
     legend.position = "bottom",
     legend.justification = "bottom",
     axis.text.x = element_text( face = "bold",color = "black", size = 10),
-    plot.title = element_text(hjust = 0.5))+
+    plot.title = element_text(hjust = 0.5),
+    plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10))+
   scale_x_continuous(breaks = seq(84, 98, 2))+
   scale_y_continuous(breaks = seq(0, 60, 0.5))
   
@@ -62,8 +64,122 @@ p <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year,y=eval(parse(text =Var 
 ```
 
 ## Employment
+```{r,fig.width=10,fig.height=5,message=FALSE,fig.align='center'}
+ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year))+
+  geom_point(aes(y = Total_Employment ),color = "black" )+
+  geom_line(aes(y = Total_Employment),color = "black")+
+  geom_point(aes(y = EMPR_T/4),color = "red")+
+  geom_line(aes(y = EMPR_T/4),color = "red")+
+  labs(x = "Year" , title = "Total Employment",caption = str_wrap("Employed Population and Employment rate are calculated according to the definition for the working-Age population from the year 1384 to 1398",140))+
+  scale_y_continuous(
+    breaks = seq(0, 100, 1),
+    name = "Employd Pop(Million)",
+    sec.axis = sec_axis(~.*4, name="Employment Rate (%)",breaks = seq(0, 100, 3))
+  )+
+  scale_x_continuous(breaks = seq(84, 98, 2))+
+  theme(
+  plot.title = element_text(hjust = 0.5),
+  axis.text.y.right=element_text(colour="red"),
+  axis.ticks.y.right=element_line(colour="red"),
+  axis.title.y.right=element_text(colour="red",margin = margin(l = 10)),
+  axis.title.y.left =element_text(margin = margin(r = 10)),
+  plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10)
+  )
 
-```{r,echo=FALSE,fig.width=10,fig.height=15,message=FALSE}
+```
+
+```{r,echo=FALSE,fig.width=10,fig.height=10}
+P1 <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year))+
+  geom_point(aes(y = Male_Employment ),color = "black" )+
+  geom_line(aes(y = Male_Employment),color = "black")+
+  geom_point(aes(y = EMPR_M/5),color = "red")+
+  geom_line(aes(y = EMPR_M/5),color = "red")+
+  labs(x = "Year" , title = "Male Employment",caption = str_wrap("Employed Population and Employment rate are calculated according to the definition for the working-Age male population from the year 1384 to 1398",55))+
+  scale_y_continuous(
+    breaks = seq(0, 100, 1),
+    name = "Employd Pop(Million)",
+    sec.axis = sec_axis(~.*5, name="Employment Rate (%)",breaks = seq(0, 100, 3))
+  )+
+  scale_x_continuous(breaks = seq(84, 98, 2))+
+  theme(
+  plot.title = element_text(hjust = 0.5),
+  axis.text.y.right=element_text(colour="red"),
+  axis.ticks.y.right=element_line(colour="red"),
+  axis.title.y.right=element_text(colour="red",margin = margin(l = 10)),
+  axis.title.y.left =element_text(margin = margin(r = 10)),
+  plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10)
+  )
+P2 <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year))+
+  geom_point(aes(y = Female_Employment ),color = "black" )+
+  geom_line(aes(y = Female_Employment),color = "black")+
+  geom_point(aes(y = EMPR_F/20),color = "red")+
+  geom_line(aes(y = EMPR_F/20),color = "red")+
+  labs(x = "Year" , title = "Female Employment",caption = str_wrap("Employed Population and Employment rate are calculated according to the definition for the working-Age female population from the year 1384 to 1398",55))+
+  scale_y_continuous(
+    breaks = seq(0, 100, 0.2),
+    name = "Employd Pop(Million)",
+    sec.axis = sec_axis(~.*20, name="Employment Rate (%)",breaks = seq(0, 100, 3))
+  )+
+  scale_x_continuous(breaks = seq(84, 98, 2))+
+  theme(
+  plot.title = element_text(hjust = 0.5),
+  axis.text.y.right=element_text(colour="red"),
+  axis.ticks.y.right=element_line(colour="red"),
+  axis.title.y.right=element_text(colour="red",margin = margin(l = 10)),
+  axis.title.y.left =element_text(margin = margin(r = 10)),
+  plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10)
+  )
+P3 <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year))+
+  geom_point(aes(y = Urban_Employment ),color = "black" )+
+  geom_line(aes(y = Urban_Employment),color = "black")+
+  geom_point(aes(y = EMPR_U/5.5),color = "red")+
+  geom_line(aes(y = EMPR_U/5.5),color = "red")+
+  labs(x = "Year" , title = "Urban Employment",caption = str_wrap("Employed Population and Employment rate are calculated according to the definition for the working-Age Urban population from the year 1384 to 1398",55))+
+  scale_y_continuous(
+    breaks = seq(0, 100, 1),
+    name = "Employd Pop(Million)",
+    sec.axis = sec_axis(~.*5.5, name="Employment Rate (%)",breaks = seq(0, 100, 3))
+  )+
+  scale_x_continuous(breaks = seq(84, 98, 2))+
+  theme(
+  plot.title = element_text(hjust = 0.5),
+  axis.text.y.right=element_text(colour="red"),
+  axis.ticks.y.right=element_line(colour="red"),
+  axis.title.y.right=element_text(colour="red",margin = margin(l = 10)),
+  axis.title.y.left =element_text(margin = margin(r = 10)),
+  plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10)
+  )
+
+P4 <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year))+
+  geom_point(aes(y = Rural_Employment ),color = "black" )+
+  geom_line(aes(y = Rural_Employment),color = "black")+
+  geom_point(aes(y = EMPR_R/13.5),color = "red")+
+  geom_line(aes(y = EMPR_R/13.5),color = "red")+
+  labs(x = "Year" , title = "Rural Employment",caption = str_wrap("Employed Population and Employment rate are calculated according to the definition for the working-Age Rural population from the year 1384 to 1398",55))+
+  scale_y_continuous(
+    breaks = seq(0, 100, 0.2),
+    name = "Employd Pop(Million)",
+    sec.axis = sec_axis(~.*13.5, name="Employment Rate (%)",breaks = seq(0, 100, 3))
+  )+
+  scale_x_continuous(breaks = seq(84, 98, 2))+
+  theme(
+  plot.title = element_text(hjust = 0.5),
+  axis.text.y.right=element_text(colour="red"),
+  axis.ticks.y.right=element_line(colour="red"),
+  axis.title.y.right=element_text(colour="red",margin = margin(l = 10)),
+  axis.title.y.left =element_text(margin = margin(r = 10)),
+  plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10))
+
+  
+ggarrange(P1,P2,P3,P4,ncol = 2,nrow = 2)
+```
+
+```{r,echo=FALSE,fig.width=10,fig.height=15,message=FALSE,eval=FALSE}
 layout(matrix(c(1,1,2,3,4,5),nrow = 3,ncol = 2,byrow = TRUE) )
 
 LFSINP2(LFS_Indicators_Y,x = "Year",y1 = "Total_Employment",y2="EMPR_T" ,Main = "Total Employment",y1l = "Employed Pop (Million)",y2l = "Employment rate (%)",y1lim = c(20,25),y2lim = c(75,100))
@@ -91,7 +207,124 @@ LFSINP2(LFS_Indicators_Y,x = "Year",y1 = "Rural_Employment",y2="EMPR_R" ,Main = 
 ```
 
 ## Unemployment
-```{r,echo=FALSE,fig.width=10,fig.height=15,message=FALSE}
+
+```{r,fig.width=10,fig.height=5,message=FALSE,fig.align='center'}
+
+ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year))+
+  geom_point(aes(y = Total_Unemployment ),color = "black" )+
+  geom_line(aes(y = Total_Unemployment),color = "black")+
+  geom_point(aes(y = UMPR_T/7),color = "red")+
+  geom_line(aes(y = UMPR_T/7),color = "red")+
+  labs(x = "Year" , title = "Total Unemployment",caption = str_wrap("Unemployed Population and Unemployment rate are calculated according to the definition for the working-Age population from the year 1384 to 1398",140))+
+  scale_y_continuous(
+    breaks = seq(0, 100, 0.2),
+    name = "Unemployed Pop(Million)",
+    sec.axis = sec_axis(~.*7, name="Unemployment Rate (%)",breaks = seq(0, 100, 1))
+  )+
+  scale_x_continuous(breaks = seq(84, 98, 2))+
+  theme(
+  plot.title = element_text(hjust = 0.5),
+  axis.text.y.right=element_text(colour="red"),
+  axis.ticks.y.right=element_line(colour="red"),
+  axis.title.y.right=element_text(colour="red",margin = margin(l = 10)),
+  axis.title.y.left =element_text(margin = margin(r = 10)),
+  plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10)
+  )
+
+```
+
+```{r,echo=FALSE,fig.width=10,fig.height=10}
+P1 <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year))+
+  geom_point(aes(y = Male_Unemployment ),color = "black" )+
+  geom_line(aes(y = Male_Unemployment),color = "black")+
+  geom_point(aes(y = UMPR_M/7.5),color = "red")+
+  geom_line(aes(y = UMPR_M/7.5),color = "red")+
+  labs(x = "Year" , title = "Male Unemployment",caption = str_wrap("Unemployed Population and Unemployment rate are calculated according to the definition for the working-Age male population from the year 1384 to 1398",55))+
+  scale_y_continuous(
+    breaks = seq(0, 100, 0.2),
+    name = "Unemployed Pop(Million)",
+    sec.axis = sec_axis(~.*7.5, name="Unemployment Rate (%)",breaks = seq(0, 100, 1))
+  )+
+  scale_x_continuous(breaks = seq(84, 98, 2))+
+  theme(
+  plot.title = element_text(hjust = 0.5),
+  axis.text.y.right=element_text(colour="red"),
+  axis.ticks.y.right=element_line(colour="red"),
+  axis.title.y.right=element_text(colour="red",margin = margin(l = 10)),
+  axis.title.y.left =element_text(margin = margin(r = 10)),
+  plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10)
+  )
+P2 <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year))+
+  geom_point(aes(y = Female_Unemployment ),color = "black" )+
+  geom_line(aes(y = Female_Unemployment),color = "black")+
+  geom_point(aes(y = UMPR_F/30),color = "red")+
+  geom_line(aes(y = UMPR_F/30),color = "red")+
+  labs(x = "Year" , title = "Female Unemployment",caption = str_wrap("Unemployed Population and Unemployment rate are calculated according to the definition for the working-Age female population from the year 1384 to 1398",55))+
+  scale_y_continuous(
+    breaks = seq(0, 100, 0.2),
+    name = "Unemployed Pop(Million)",
+    sec.axis = sec_axis(~.*30, name="Unemployment Rate (%)",breaks = seq(0, 100, 1))
+  )+
+  scale_x_continuous(breaks = seq(84, 98, 2))+
+  theme(
+  plot.title = element_text(hjust = 0.5),
+  axis.text.y.right=element_text(colour="red"),
+  axis.ticks.y.right=element_line(colour="red"),
+  axis.title.y.right=element_text(colour="red",margin = margin(l = 10)),
+  axis.title.y.left =element_text(margin = margin(r = 10)),
+  plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10)
+  )
+P3 <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year))+
+  geom_point(aes(y = Urban_Unemployment),color = "black" )+
+  geom_line(aes(y = Urban_Unemployment),color = "black")+
+  geom_point(aes(y = UMPR_U/10),color = "red")+
+  geom_line(aes(y = UMPR_U/10),color = "red")+
+  labs(x = "Year" , title = "Urban Unemployment",caption = str_wrap("Unemployed Population and Unemployment rate are calculated according to the definition for the working-Age Urban population from the year 1384 to 1398",55))+
+  scale_y_continuous(
+    breaks = seq(0, 100, 0.2),
+    name = "Unemployed Pop(Million)",
+    sec.axis = sec_axis(~.*10, name="Unemployment Rate (%)",breaks = seq(0, 100, 1))
+  )+
+  scale_x_continuous(breaks = seq(84, 98, 2))+
+  theme(
+  plot.title = element_text(hjust = 0.5),
+  axis.text.y.right=element_text(colour="red"),
+  axis.ticks.y.right=element_line(colour="red"),
+  axis.title.y.right=element_text(colour="red",margin = margin(l = 10)),
+  axis.title.y.left =element_text(margin = margin(r = 10)),
+  plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10)
+  )
+
+P4 <- ggplot(data = LFS_Indicators_Y,mapping = aes(x=Year))+
+  geom_point(aes(y = Rural_Unemployment),color = "black" )+
+  geom_line(aes(y = Rural_Unemployment),color = "black")+
+  geom_point(aes(y = UMPR_F/50),color = "red")+
+  geom_line(aes(y = UMPR_F/50),color = "red")+
+  labs(x = "Year" , title = "Rural Unemployment",caption = str_wrap("Unemployed Population and Unemployment rate are calculated according to the definition for the working-Age Rural population from the year 1384 to 1398",55))+
+  scale_y_continuous(
+    breaks = seq(0, 100, 0.05),
+    name = "Unemployed Pop(Million)",
+    sec.axis = sec_axis(~.*50, name="Unemployment Rate (%)",breaks = seq(0, 100,1))
+  )+
+  scale_x_continuous(breaks = seq(84, 98, 2))+
+  theme(
+  plot.title = element_text(hjust = 0.5),
+  axis.text.y.right=element_text(colour="red"),
+  axis.ticks.y.right=element_line(colour="red"),
+  axis.title.y.right=element_text(colour="red",margin = margin(l = 10)),
+  axis.title.y.left =element_text(margin = margin(r = 10)),
+  plot.caption = element_text(hjust = 0,face = "italic",color = "black", 
+                                size = 10))
+
+  
+ggarrange(P1,P2,P3,P4,ncol = 2,nrow = 2)
+```
+
+```{r,echo=FALSE,fig.width=10,fig.height=15,message=FALSE,eval=FALSE}
 layout(matrix(c(1,1,2,3,4,5),nrow = 3,ncol = 2,byrow = TRUE))
 
 LFSINP2(LFS_Indicators_Y,x = "Year",y1 = "Total_Unemployment",y2="UMPR_T" ,Main = "Total Unemployment",y1l = "Unemployed Pop (Million)",y2l = "Unemployment rate (%)",y1lim = c(2.2,3.41),y2lim = c(0,25))
@@ -119,11 +352,11 @@ ggpubr::ggarrange(P1,P2,P3,P4,P5,ncol = 2,nrow = 3)
 ## Participation
 
 ```{r,echo=FALSE,fig.width=10,fig.height=15}
-P1 <- LFSINP1("Total_Participation",xlab = "Year",ylab = "Participated Population",Main = "Total Participation")
-P2 <- LFSINP1("Male_Participation",xlab = "Year",ylab = "Participated Population",Main = "Male Participation")
-P3 <- LFSINP1("Female_Participation",xlab = "Year",ylab = "Participated Population",Main = "Female Participation")
-P4 <- LFSINP1("Urban_Participation",xlab = "Year",ylab = "Participated Population",Main = "Urban Participation")
-P5 <- LFSINP1("Rural_Participation",xlab = "Year",ylab = "Participated Population",Main = "Rural Participation")
+P1 <- LFSINP1("Total_Participation",xlab = "Year",ylab = "Participated Population",Main = "Total Participation",cap = str_wrap("Total Participated population is the sum of the employed and unemployed population calculated for Working age population (age 10 more) according to Labor force(LFS) data From year 1384(2005) to 1398 (2019).",145))
+P2 <- LFSINP1("Male_Participation",xlab = "Year",ylab = "Participated Population",Main = "Male Participation",cap = str_wrap("Male participated population is the sum of the employed and unemployed male population calculated for the working-age population (age 10 more) according to LFS data from 1384 to 1398.",65))
+P3 <- LFSINP1("Female_Participation",xlab = "Year",ylab = "Participated Population",Main = "Female Participation",cap = str_wrap("Female participated population is the sum of the employed and unemployed female population calculated for the working-age population (age 10 more) according to LFS data from 1384 to 1398.",65))
+P4 <- LFSINP1("Urban_Participation",xlab = "Year",ylab = "Participated Population",Main = "Urban Participation",cap = str_wrap("The Urban participated population is the sum of the employed and unemployed Urban population calculated for the working-age population (age 10 more) according to LFS data from 1384 to 1398.",65))
+P5 <- LFSINP1("Rural_Participation",xlab = "Year",ylab = "Participated Population",Main = "Rural Participation",cap = str_wrap("The Rural participated population is the sum of the employed and unemployed Rural population calculated for the working-age population (age 10 more) according to LFS data from 1384 to 1398.",65))
 
 ggarrange(P1,ggarrange(P2,P3,P4,P5,ncol = 2 ,nrow=2),ncol = 1,nrow = 2,heights =c(0.5,1))
 ```
