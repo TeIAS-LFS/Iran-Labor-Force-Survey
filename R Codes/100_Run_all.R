@@ -1,11 +1,11 @@
 rm(list=ls())
-# Test git commit from R
 # Before Running Code specify the directories in  which your code,
 #             your files and your data stored.
 
-#code_path = "C:/Users/pc/Dropbox/Research/Labor Market/LFS Cleaning/R Codes"
-code_path  = "C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes"
-Files_paths       = "C:/Users/ali/Dropbox/LFS Cleaning/GitHub/Files" #path of files expect raw data
+code_path = "F:/LFS/Git codes/Iran-Labor-Force-Survey/R Codes"
+#code_path  = "C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes"
+Files_paths       = "F:/LFS/Git codes/Iran-Labor-Force-Survey/Files" 
+#Files_paths       = "C:/Users/ali/Dropbox/LFS Cleaning/GitHub/Files"
 Path              = "F:/LFS" 
 First_year        = 84L
 Last_year         = 98L

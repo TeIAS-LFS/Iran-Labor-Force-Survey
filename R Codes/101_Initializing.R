@@ -1,5 +1,4 @@
 
-Path              = "F:/LFS"               
 Raw_data          = "Raw data"
 Imported_data     = "Imported data"
 Processd_data     = "Processed data"
