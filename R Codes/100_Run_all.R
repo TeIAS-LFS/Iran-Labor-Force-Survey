@@ -2,10 +2,10 @@ rm(list=ls())
 # Before Running Code specify the directories in  which your code,
 #             your files and your data stored.
 
-code_path = "F:/LFS/Git codes/Iran-Labor-Force-Survey/R Codes"
-#code_path  = "C:/Users/ali/Dropbox/LFS Cleaning/GitHub/R Codes"
-Files_paths       = "F:/LFS/Git codes/Iran-Labor-Force-Survey/Files" 
-#Files_paths       = "C:/Users/ali/Dropbox/LFS Cleaning/GitHub/Files"
+#code_path = "F:/LFS/Git codes/Iran-Labor-Force-Survey/R Codes"
+code_path  = "G:/Github/LFS/Iran-Labor-Force-Survey/R Codes"
+#Files_paths       = "F:/LFS/Git codes/Iran-Labor-Force-Survey/Files" 
+Files_paths       = "G:/Github/LFS/Iran-Labor-Force-Survey/Files"
 Path              = "F:/LFS" 
 First_year        = 84L
 Last_year         = 98L
