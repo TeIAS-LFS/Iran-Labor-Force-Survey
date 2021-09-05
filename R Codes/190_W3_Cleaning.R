@@ -116,42 +116,20 @@ for (year in First_year:Last_year) {
 
 
 
-#for (year in N) {
-#  W3 <- readRDS(paste0(Processd_data_Path,"/",year,"/W3.RDS"))
-#  if (year %in% 84:87) {
-#   W3 <- W3%>%
-#     mutate(HHID = paste0("01",HHID))%>%
-#     mutate(IID  = paste0("01",IID))
-#  }else if (year %in% 88:91) {
-#    W3 <- W3%>%
-#      mutate(HHID = paste0("02",HHID))%>%
-#      mutate(IID  = paste0("02",IID))    
-#    
-#  }else if (year %in% 92:96) {
-#    W3 <- W3%>%
-#      mutate(HHID = paste0("03",HHID))%>%
-#      mutate(IID  = paste0("03",IID))    
-#    
-#  }else{
-#    W3 <- W3%>%
-#      mutate(HHID = paste0("04",HHID))%>%
-#      mutate(IID  = paste0("04",IID))    
-#  }
-#  saveRDS(W3,paste0(Processd_data_Path,"/",year,"/W3.RDS"))
-#}
 
-#C_HHID_IID <- readRDS(paste0(Files_paths,"/C_HHID_IID.RDS"))
-#County_ID <- readRDS(paste0(Files_paths,"/County_ID.RDS"))
 
-#for (year in First_year:Last_year) {
-#  W3 <- readRDS(paste0(Processd_data_Path,"/",year,"/W3.RDS"))
-#  
-#  W3 <- W3%>%
-#    left_join(C_HHID_IID,key = "Pkey")%>%
-#    left_join(County_ID,key = "Pkey")%>%
-#    select(Pkey,Year,Season,Province_ID,Shahrestan,C_HHID,C_IID,Rural,IW_Seasonly,Adj_IW_Seasonly)
-#  
-#  saveRDS(W3,paste0(Processd_data_Path,"/",year,"/W3.RDS"))
-#}
+C_HHID_IID <- readRDS(paste0(Files_paths,"/C_HHID_IID.RDS"))
+County_ID <- readRDS(paste0(Files_paths,"/County_ID.RDS"))
+
+for (year in First_year:Last_year) {
+  W3 <- readRDS(paste0(Processd_data_Path,"/",year,"/W3.RDS"))
+  
+  W3 <- W3%>%
+    left_join(C_HHID_IID,key = "Pkey")%>%
+    left_join(County_ID,key = "Pkey")%>%
+    select(Pkey,Year,Season,Province_ID,Shahrestan,C_HHID,C_IID,Rural,IW_Seasonly,Adj_IW_Seasonly)
+  
+ saveRDS(W3,paste0(Processd_data_Path,"/",year,"/W3.RDS"))
+}
 
 
