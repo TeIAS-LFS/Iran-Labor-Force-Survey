@@ -5,6 +5,9 @@ library("readxl")
 library("foreign")
 library("RODBC")
 
+ISIC <- read_xlsx(paste0(Files_paths,"/ISIC.xlsx"),sheet = "Converting to Rev3.1")%>%
+  mutate_all(as.character)
+
 F3_colnames <- read_xlsx(Col_name_path,sheet = "FORM3")
 
 F3_RDS_Path <- RDS_path[str_detect(RDS_path,"FORM3.RDS|9802|9803|9804")]
@@ -28,6 +31,7 @@ Numeric_vars <- c("F3_D14SAL","F3_D14MAH","F3_D15SAL","F3_D15MAH","F3_D16SHASLIR
 
 Character_vars <- c("Pkey")
 
+year <- 84
 
 for (year in First_year:Last_year) {
   index <- match(F3_colnames$Year_Season[str_detect(F3_colnames$Year_Season,paste0("^",year))],F3_colnames$Year_Season)
@@ -269,13 +273,16 @@ for (year in First_year:Last_year) {
            F3_D37MAH = ifelse(F3_D37MAH > 12,NA,F3_D37MAH),
            F3_D40MAH = ifelse(F3_D40MAH > 12,NA,F3_D40MAH))
   
-
-
+  FORM3 <- FORM3%>%
+    mutate(Year = str_sub(Pkey,1,2))%>%
+    left_join(ISIC,by = c("Year" , "F3_D10"))%>%
+    select(-Year)
+  
   
   if (year <= 97) {
     
     FORM3_A <- FORM3 %>%
-      select(Pkey,F3_D01,F3_D02,F3_D03,F3_D06,F3_D07,F3_D08,F3_D09,F3_D10,
+      select(Pkey,F3_D01,F3_D02,F3_D03,F3_D06,F3_D07,F3_D08,F3_D09,F3_D10,Main_Group_3.1,
              F3_D11,F3_D12,F3_D13,F3_D14SAL,F3_D14MAH,F3_D15SAL,F3_D15MAH,
              F3_D16SHASLIR,F3_D16SHASLIS,F3_D16SHHAMRO,F3_D16SHHAMSA,
              F3_D17,F3_D18SHANBEH,F3_D18YEKSHAN,F3_D18DOSHANB,F3_D18SESHANB,
@@ -304,9 +311,8 @@ for (year in First_year:Last_year) {
       filter(F2_D07 >=10|is.na(F2_D07))
     FORM3 <- FORM3%>%select(colnames(FORM3)[colnames(FORM3)%in% c(colnames(F3_colnames),"Pkey")])
       
-    
     FORM3_A <- FORM3%>%
-      select(Pkey,F3_D01,F3_D02,F3_D03,F3_D06,F3_D07,F3_D08,F3_D09,F3_D10,
+      select(Pkey,F3_D01,F3_D02,F3_D03,F3_D06,F3_D07,F3_D08,F3_D09,F3_D10,Main_Group_3.1,
              F3_D11,F3_D12,F3_D13,F3_D14SAL,F3_D14MAH,F3_D15SAL,F3_D15MAH,
              F3_D16SHASLIR,F3_D16SHASLIS,F3_D16SHHAMRO,F3_D16SHHAMSA,
              F3_D17,F3_D18SHANBEH,F3_D18YEKSHAN,F3_D18DOSHANB,F3_D18SESHANB,
@@ -317,6 +323,7 @@ for (year in First_year:Last_year) {
              F3_D35MAH,F3_D36,F3_D37SAL,F3_D37MAH,F3_D38,F3_D39,F3_D40SAL,
              F3_D40MAH,F3_D41,F3_D42,F3_D43,F3_D44,F3_D45,F3_D46,F3_D47,F3_D49,F3_D50)
       
+    
 
     FORM3_EX <- FORM3%>%
       select(-colnames(FORM3_A),Pkey)%>%
