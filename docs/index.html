@@ -6,11 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Iran Labor Force Survey</title>
   <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
-  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.32 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Iran Labor Force Survey" />
   <meta property="og:type" content="book" />
-  
   
   <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
@@ -32,8 +31,8 @@
   
 
 <link rel="next" href="intro.html"/>
-<script src="libs/header-attrs-2.9/header-attrs.js"></script>
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -49,9 +48,9 @@
 
 
 
-
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 
 
 
@@ -74,13 +73,13 @@
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
 <li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
-<li class="chapter" data-level="3" data-path="Design-Definitions.html"><a href="Design-Definitions.html"><i class="fa fa-check"></i><b>3</b> Design and definitions</a>
+<li class="chapter" data-level="3" data-path="Design_Definitions.html"><a href="Design_Definitions.html"><i class="fa fa-check"></i><b>3</b> Design and definitions</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="Design-Definitions.html"><a href="Design-Definitions.html#purpose"><i class="fa fa-check"></i><b>3.1</b> Purpose</a></li>
-<li class="chapter" data-level="3.2" data-path="Design-Definitions.html"><a href="Design-Definitions.html#target-society"><i class="fa fa-check"></i><b>3.2</b> Target society</a></li>
-<li class="chapter" data-level="3.3" data-path="Design-Definitions.html"><a href="Design-Definitions.html#sampling-framework"><i class="fa fa-check"></i><b>3.3</b> Sampling framework</a></li>
-<li class="chapter" data-level="3.4" data-path="Design-Definitions.html"><a href="Design-Definitions.html#weighting"><i class="fa fa-check"></i><b>3.4</b> Weighting</a></li>
-<li class="chapter" data-level="3.5" data-path="Design-Definitions.html"><a href="Design-Definitions.html#definitions"><i class="fa fa-check"></i><b>3.5</b> Definitions</a></li>
+<li class="chapter" data-level="3.1" data-path="Design_Definitions.html"><a href="Design_Definitions.html#purpose"><i class="fa fa-check"></i><b>3.1</b> Purpose</a></li>
+<li class="chapter" data-level="3.2" data-path="Design_Definitions.html"><a href="Design_Definitions.html#target-society"><i class="fa fa-check"></i><b>3.2</b> Target society</a></li>
+<li class="chapter" data-level="3.3" data-path="Design_Definitions.html"><a href="Design_Definitions.html#sampling-framework"><i class="fa fa-check"></i><b>3.3</b> Sampling framework</a></li>
+<li class="chapter" data-level="3.4" data-path="Design_Definitions.html"><a href="Design_Definitions.html#weighting"><i class="fa fa-check"></i><b>3.4</b> Weighting</a></li>
+<li class="chapter" data-level="3.5" data-path="Design_Definitions.html"><a href="Design_Definitions.html#definitions"><i class="fa fa-check"></i><b>3.5</b> Definitions</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="questionnaire-details.html"><a href="questionnaire-details.html"><i class="fa fa-check"></i><b>4</b> Questionnaire Details</a>
 <ul>
@@ -159,13 +158,18 @@
 <div id="header">
 <h1 class="title">Iran Labor Force Survey</h1>
 <p class="author"><em>Naser Amanzadeh, Ali Naghizadeh</em></p>
+<p class="date"><em>Tehran Institute for Advanced Studies (TeIAS)</em></p>
 </div>
-<div id="preface" class="section level1" number="1">
-<h1><span class="header-section-number"> 1</span> Preface</h1>
-<p><img src="Figures/fig2.png" /></p>
+<div id="preface" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number"> 1</span> Preface<a href="index.html#preface" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><img src="C:/Users/ali/Dropbox/LFS%20Cleaning/GitHub/RMarkDown/Figures/fig2.png" /></p>
 <p>The purpose of this document is to review the Iranian labor force survey plan. For this purpose, first the goals and generalities of this plan are explained, and then the data cleaning process is explained in detail, and finally facts about the Iranian labor force are explained</p>
 <p>This document is made by R bookdown. you can find this template and a lot of useful information about git book package in <a href="https://bookdown.org/yihui/bookdown/">bookdown: Authoring Books and Technical Documents with R Markdown</a></p>
 <p>The first part of this article is written according to the reports of the Statistics Center. To better understand the labor force survey plan, it is strongly recommended that you review these reports. These reports can be found at this <a href="https://www.amar.org.ir/%D8%AF%D8%A7%D8%AF%D9%87%D9%87%D8%A7-%D9%88-%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA-%D8%A2%D9%85%D8%A7%D8%B1%DB%8C/%D8%AC%D9%85%D8%B9%DB%8C%D8%AA-%D9%88-%D9%86%DB%8C%D8%B1%D9%88%DB%8C-%DA%A9%D8%A7%D8%B1/%D9%86%DB%8C%D8%B1%D9%88%DB%8C-%DA%A9%D8%A7%D8%B1#5585732-">link</a>.</p>
+<p>This document is free to read, If you are using any material of this document, please cite it as :</p>
+<ul>
+<li>Naser Amanzadeh, Ali Naghizadeh (2021) <em>“Iran Labor Force Survey: Introduction and Data Cleaning”</em></li>
+</ul>
 <p>This project has been implemented in Git and the interested user can get all the relevant codes and files in <a href="https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey">Iran-Labor-Force-Survey</a></p>
 
 </div>
@@ -179,7 +183,6 @@
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
@@ -219,6 +222,10 @@ gitbook.start({
 "text": null
 },
 "download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }
