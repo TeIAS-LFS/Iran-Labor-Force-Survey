@@ -15,7 +15,7 @@ description: "This is a minimal example of using the bookdown package to write a
 
 # Preface
 
-![](C:/Users/ali/Dropbox/LFS Cleaning/GitHub/RMarkDown/Figures/fig2.png)
+![](C:/Users/alina/OneDrive/Desktop/LFS/Github/Iran-Labor-Force-Survey/RMarkDown/Figures/fig2.png)
 
 The purpose of this document is to review the Iranian labor force survey plan. For this purpose, first the goals and generalities of this plan are explained, and then the data cleaning process is explained in detail, and finally facts about the Iranian labor force are explained
 
