@@ -23,4 +23,8 @@ This document is made by R bookdown. you can find this template and a lot of use
 
 The first part of this article is written according to the reports of the Statistics Center. To better understand the labor force survey plan, it is strongly recommended that you review these reports. These reports can be found at this [link](https://www.amar.org.ir/%D8%AF%D8%A7%D8%AF%D9%87%D9%87%D8%A7-%D9%88-%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA-%D8%A2%D9%85%D8%A7%D8%B1%DB%8C/%D8%AC%D9%85%D8%B9%DB%8C%D8%AA-%D9%88-%D9%86%DB%8C%D8%B1%D9%88%DB%8C-%DA%A9%D8%A7%D8%B1/%D9%86%DB%8C%D8%B1%D9%88%DB%8C-%DA%A9%D8%A7%D8%B1#5585732-).
 
+This document is free to read, If you are using any material of this document, please cite it as :
+
+* Naser Amanzadeh, Ali Naghizadeh (2021) *“Iran Labor Force Survey: Introduction and Data Cleaning”*
+
 This project has been implemented in Git and the interested user can get all the relevant codes and files in [Iran-Labor-Force-Survey](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey)

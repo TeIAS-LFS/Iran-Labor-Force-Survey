@@ -17,9 +17,5 @@ In this document, we explain the cleaning steps needed prior to use of the LFS d
 
 The rest of this document is organized as follows. In section 2, we take a look at the design of survey and definitions used in it. In section 3, we briefly review the two survey questionnaires. Section 4 explains the cleaning procedure step by step, and finally, in section 5, we provide some descriptive statistics and plots of main labor market indicators in Iran.
 
-This document is free to read, If you are using any material of this document, please cite it as :
-
-* Naser Amanzadeh, Ali Naghizadeh (2021) *“Iran Labor Force Survey: Introduction and Data Cleaning”*
-
 You can find R codes [Here](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/tree/master/R%20Codes) and necessary files for cleaning like _Meta Data_, _LFS_colnames_, etc [Here](https://github.com/TeIAS-LFS/Iran-Labor-Force-Survey/tree/master/Files)
 
